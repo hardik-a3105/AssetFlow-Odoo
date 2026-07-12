@@ -32,7 +32,17 @@
     <record id="group_assetflow_admin" model="res.groups">
         <field name="name">Admin</field>
         <field name="category_id" ref="module_category_assetflow"/>
-        <field name="implied_ids" eval="[(4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_manager')), (4, ref('base.group_system'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_manager'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Link Odoo Base Groups to automatically grant access -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
+
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_admin'))]"/>
     </record>
 
     <!-- RECORD RULES -->
