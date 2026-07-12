@@ -1,39 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- ==================== DEPARTMENTS ==================== -->
-    <record id="dept_engineering" model="assetflow.department">
-        <field name="name">Engineering</field>
-        <field name="code">ENG</field>
-        <field name="status">active</field>
-    </record>
-
-    <record id="dept_finance" model="assetflow.department">
-        <field name="name">Finance &amp; Accounts</field>
-        <field name="code">FIN</field>
-        <field name="status">active</field>
-    </record>
-
-    <!-- ==================== CATEGORIES ==================== -->
-    <record id="cat_laptops" model="assetflow.category">
-        <field name="name">Laptops &amp; Workstations</field>
-        <field name="warranty_period">36</field>
-    </record>
-
-    <record id="cat_furniture" model="assetflow.category">
-        <field name="name">Office Furniture</field>
-        <field name="warranty_period">60</field>
-    </record>
-
-    <record id="cat_mobiles" model="assetflow.category">
-        <field name="name">Mobile Devices</field>
-        <field name="warranty_period">24</field>
-    </record>
-
-    <record id="cat_servers" model="assetflow.category">
-        <field name="name">Server Infrastructure</field>
-        <field name="warranty_period">48</field>
-    </record>
-
     <!-- ==================== PARTNERS & USERS ==================== -->
     <!-- John Doe (Employee) -->
     <record id="partner_john" model="res.partner">

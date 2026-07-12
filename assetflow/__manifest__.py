@@ -13,11 +13,14 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
+        'data/initial_data.xml',
         'views/dashboard_views.xml',
         'views/org_setup_views.xml',
         'views/assetflow_views.xml',
         'data/ir_cron_data.xml',
         'data/mail_template_data.xml',
+    ],
+    'demo': [
         'data/demo.xml',
     ],
     'assets': {

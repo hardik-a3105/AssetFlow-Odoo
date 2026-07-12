@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: odoo
     volumes:
       - .:/mnt/extra-addons
-    command: -d assetflow -u assetflow --dev=all
+    command: -d assetflow -i assetflow --dev=all
 
 volumes:
   odoo-db-data:
