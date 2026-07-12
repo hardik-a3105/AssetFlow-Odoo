@@ -95,6 +95,18 @@ class AssetflowAsset(models.Model):
             body_text = msg.body or ""
             if body_text.startswith("<p>") and body_text.endswith("</p>"):
                 body_text = body_text[3:-4]
+            
+            # Fallback for empty/system-generated chatter tracking bodies
+            if not body_text.strip():
+                if msg.model == 'assetflow.allocation':
+                    body_text = "Custodian allocation updated"
+                elif msg.model == 'assetflow.booking':
+                    body_text = "Resource booking scheduled"
+                elif msg.model == 'assetflow.maintenance':
+                    body_text = "Maintenance request logged"
+                else:
+                    body_text = "System activity logged"
+
             activities.append({
                 'id': msg.id,
                 'author': msg.author_id.name or "System",
