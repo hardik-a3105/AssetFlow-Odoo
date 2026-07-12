@@ -52,15 +52,44 @@ http://localhost:8069
 
 ---
 
-## That's It! 🎉
+## Demonstration & Recording Workflow
 
-You should see the AssetFlow dashboard with:
-- KPI cards (Available Assets, Active Bookings, etc.)
-- Quick Action buttons
-- Quick Start Checklist
-- Recent Activity feed
+To test or record a demo of the role-based workflows and security, use the role accounts below.
 
-Navigate through the left sidebar to explore Assets, Allocations, Bookings, Maintenance, Audits, and Reports.
+### Demo Credentials
+
+| Role | Name | Login Email | Password |
+| :--- | :--- | :--- | :--- |
+| **Employee** | John Doe | `john@example.com` | `john` *(or `admin`)* |
+| **Department Head** | Jane Smith | `jane@example.com` | `jane` *(or `admin`)* |
+| **Asset Manager** | Alice Johnson | `alice@example.com` | `alice` *(or `admin`)* |
+| **Admin** | Bob Miller | `bob@example.com` | `bob` *(or `admin`)* |
+
+### Suggested Video Recording Walkthrough (3 Minutes)
+
+1. **Employee Workspace (John Doe)**:
+   - Log in using `john@example.com` (password: `john`).
+   - Notice the restricted sidebar (**Organization Setup**, **Asset Audit**, and **Reports & Analytics** are hidden).
+   - Go to **Resource Booking** and reserve a slot. Show conflict checking by trying to book a overlapping slot.
+   - Click **Switch Account/Role** in the sidebar to lock the workspace.
+2. **Department Head (Jane Smith)**:
+   - Log in using `jane@example.com` (password: `jane`).
+   - Notice department assets access and initiate a custodian transfer under **Allocations & Transfers**.
+3. **Administrator Workspace (Bob Miller)**:
+   - Log in using `bob@example.com` (password: `bob` or `admin`).
+   - Notice all tabs are fully visible, including **Organization Setup** and **Reports & Analytics**.
+   - Go to the **Maintenance Kanban** and advance a ticket (Approve, Assign, Start, Resolve).
+   - Switch to Odoo's native backend view via the grid icon, open any asset, click **Print**, and select **Asset Labels** to show the printable tag sticker PDF with its **dynamic QR Code**.
+
+---
+
+## Running Backend Unit Tests
+
+Run the automated test suite directly inside the Docker container:
+
+```bash
+docker exec -it assetflow-odoo odoo -d assetflow -i assetflow --db_host=db --db_user=odoo --db_password=odoo --test-enable --stop-after-init
+```
 
 ---
 
