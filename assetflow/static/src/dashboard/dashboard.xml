@@ -50,6 +50,15 @@
                             <div class="role-badge" t-att-class="state.currentUserRole">
                                 <t t-esc="state.currentUserRole.replace('_', ' ').toUpperCase()"/>
                             </div>
+                            <div class="role-switcher-box" style="margin-top: 10px; text-align: left;">
+                                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 600;">Simulate Role:</label>
+                                <select class="form-select" t-att-value="state.currentUserRole" t-on-change="(ev) => this.switchSimulatedRole(ev.target.value)" style="padding: 2px 6px; font-size: 0.75rem; height: 28px; line-height: 1; min-height: 28px;">
+                                    <option value="admin">Administrator</option>
+                                    <option value="manager">Asset Manager</option>
+                                    <option value="dept_head">Department Head</option>
+                                    <option value="employee">Employee</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="sidebar-menu">

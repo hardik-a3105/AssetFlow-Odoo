@@ -234,6 +234,11 @@ export class AssetFlowDashboard extends Component {
         }
     }
 
+    switchSimulatedRole(role) {
+        this.state.currentUserRole = role;
+        this.notification.add(`Simulated role updated to ${role.replace('_', ' ').toUpperCase()}`, { type: "info" });
+    }
+
     // Mock Login/Lock screen
     handleLogin() {
         if (!this.state.loginEmail || !this.state.loginPassword) {
