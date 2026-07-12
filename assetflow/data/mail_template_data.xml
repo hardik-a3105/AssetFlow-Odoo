@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Template for Transfer Request -->
+        <record id="email_template_transfer_requested" model="mail.template">
+            <field name="name">AssetFlow: Asset Transfer Request</field>
+            <field name="model_id" ref="model_assetflow_transfer_request"/>
+            <field name="subject">Asset Transfer Request: {{ object.asset_id.name }} ({{ object.asset_id.tag }})</field>
+            <field name="email_from">{{ (object.create_uid.email_formatted) }}</field>
+            <field name="email_to">{{ object.to_employee_id.email_formatted }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-family: 'Inter', sans-serif;">
+                    <p style="margin: 0px; padding: 0px; font-size: 14px;">
+                        Hello <strong><t t-out="object.to_employee_id.name"/></strong>,<br/><br/>
+                        An asset transfer has been requested for you.
+                        <br/><br/>
+                        <strong>Asset:</strong> <t t-out="object.asset_id.name"/> (<t t-out="object.asset_id.tag"/>)<br/>
+                        <strong>From Employee:</strong> <t t-out="object.from_employee_id.name or 'Inventory/System'"/><br/>
+                        <strong>Reason:</strong> <t t-out="object.reason or 'N/A'"/><br/><br/>
+                        Please log in to your Odoo portal to review and accept the transfer.
+                        <br/><br/>
+                        Best regards,<br/>
+                        AssetFlow System
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Template for Overdue Allocation -->
+        <record id="email_template_allocation_overdue" model="mail.template">
+            <field name="name">AssetFlow: Overdue Asset Warning</field>
+            <field name="model_id" ref="model_assetflow_allocation"/>
+            <field name="subject">Action Required: Overdue Asset Return - {{ object.asset_id.name }} ({{ object.asset_id.tag }})</field>
+            <field name="email_from">{{ object.create_uid.email_formatted }}</field>
+            <field name="email_to">{{ object.employee_id.email_formatted }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-family: 'Inter', sans-serif;">
+                    <p style="margin: 0px; padding: 0px; font-size: 14px;">
+                        Hello <strong><t t-out="object.employee_id.name"/></strong>,<br/><br/>
+                        This is an automated notification that the following asset allocated to you is now overdue for return:
+                        <br/><br/>
+                        <strong>Asset:</strong> <t t-out="object.asset_id.name"/> (<t t-out="object.asset_id.tag"/>)<br/>
+                        <strong>Expected Return Date:</strong> <t t-out="object.expected_return_date"/><br/>
+                        <strong>Condition Notes:</strong> <t t-out="object.condition_notes or 'None'"/><br/><br/>
+                        Please return this asset to your department supervisor or IT Support Desk as soon as possible.
+                        If you need an extension, contact your Asset Manager.
+                        <br/><br/>
+                        Best regards,<br/>
+                        AssetFlow System
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

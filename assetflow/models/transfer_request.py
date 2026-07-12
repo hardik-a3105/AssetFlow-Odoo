@@ -54,3 +54,15 @@ class AssetflowTransferRequest(models.Model):
     def action_reject(self):
         for record in self:
             record.write({'state': 'rejected'})
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super(AssetflowTransferRequest, self).create(vals_list)
+        template = self.env.ref('assetflow.email_template_transfer_requested', raise_if_not_found=False)
+        if template:
+            for record in records:
+                try:
+                    template.send_mail(record.id, force_send=True)
+                except Exception:
+                    pass
+        return records

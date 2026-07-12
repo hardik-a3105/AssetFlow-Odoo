@@ -47,6 +47,8 @@
         <field name="arch" type="xml">
             <form string="Asset">
                 <sheet>
+                    <field name="tag" invisible="1"/>
+                    <field name="qr_code" widget="image" class="oe_avatar" options="{'size': [90, 90]}" readonly="1" style="float: right; margin-right: 10px;" invisible="tag == 'New'"/>
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only"/>
                         <h1>
@@ -68,6 +70,21 @@
                             <field name="state" help="Current lifecycle state (Green=Available, Blue=Allocated, Orange=Maintenance, Red=Lost/Retired)"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Depreciation &amp; Financials">
+                            <group>
+                                <group string="Asset Valuation">
+                                    <field name="acquisition_cost" readonly="1"/>
+                                    <field name="salvage_value"/>
+                                    <field name="depreciation_years"/>
+                                </group>
+                                <group string="Current Financial Standing">
+                                    <field name="accumulated_depreciation" readonly="1"/>
+                                    <field name="book_value" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>

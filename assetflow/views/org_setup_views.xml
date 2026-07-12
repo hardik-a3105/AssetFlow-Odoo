@@ -41,6 +41,7 @@
                                 <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="warranty_period"/>
+                                    <field name="maintenance_interval"/>
                                 </tree>
                             </field>
                         </page>

@@ -79,3 +79,19 @@ class AssetflowAllocation(models.Model):
                 'default_to_employee_id': self.employee_id.id,
             }
         }
+
+    @api.model
+    def _run_overdue_alerts_cron(self):
+        today = fields.Date.today()
+        overdue_allocations = self.search([
+            ('state', '=', 'active'),
+            ('expected_return_date', '<', today)
+        ])
+        template = self.env.ref('assetflow.email_template_allocation_overdue', raise_if_not_found=False)
+        if template:
+            for alloc in overdue_allocations:
+                try:
+                    template.send_mail(alloc.id, force_send=True)
+                except Exception:
+                    pass
+

@@ -47,6 +47,12 @@ class ResUsers(models.Model):
             user = self.search([('login', '=', login)], limit=1)
             if user:
                 employee_group = self.env.ref('assetflow.group_assetflow_employee', raise_if_not_found=False)
+                portal_group = self.env.ref('base.group_portal', raise_if_not_found=False)
                 if employee_group and employee_group not in user.groups_id:
-                    user.write({'groups_id': [(4, employee_group.id)]})
+                    # Remove portal group to avoid "cannot have more than one user types" conflict,
+                    # since employee_group implies standard internal user group.
+                    group_operations = [(4, employee_group.id)]
+                    if portal_group and portal_group in user.groups_id:
+                        group_operations.append((3, portal_group.id))
+                    user.write({'groups_id': group_operations})
         return login, password
