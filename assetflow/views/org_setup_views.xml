@@ -5,7 +5,7 @@
         <field name="name">Organization Setup</field>
         <field name="model_id" ref="model_assetflow_org_setup"/>
         <field name="state">code</field>
-        <field name="code" eval="action = model.action_open_setup()"/>
+        <field name="code">action = model.action_open_setup()</field>
     </record>
 
     <!-- Menu Item for Org Setup -->
