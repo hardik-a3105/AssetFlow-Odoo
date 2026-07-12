@@ -15,6 +15,7 @@
         'data/ir_sequence_data.xml',
         'views/dashboard_views.xml',
         'views/org_setup_views.xml',
+        'views/assetflow_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

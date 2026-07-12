@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== ASSET VIEWS ==================== -->
+    <record id="view_asset_tree" model="ir.ui.view">
+        <field name="name">assetflow.asset.tree</field>
+        <field name="model">assetflow.asset</field>
+        <field name="arch" type="xml">
+            <tree string="Assets">
+                <field name="tag"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="serial_no"/>
+                <field name="condition" widget="badge" decoration-success="condition == 'good'" decoration-warning="condition == 'fair'" decoration-danger="condition == 'poor'"/>
+                <field name="location"/>
+                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_asset_form" model="ir.ui.view">
+        <field name="name">assetflow.asset.form</field>
+        <field name="model">assetflow.asset</field>
+        <field name="arch" type="xml">
+            <form string="Asset">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Laptop Lenovo ThinkPad"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="serial_no"/>
+                            <field name="condition"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="acquisition_date"/>
+                            <field name="acquisition_cost"/>
+                            <field name="is_bookable"/>
+                            <field name="department_id"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== BOOKING VIEWS ==================== -->
+    <record id="view_booking_tree" model="ir.ui.view">
+        <field name="name">assetflow.booking.tree</field>
+        <field name="model">assetflow.booking</field>
+        <field name="arch" type="xml">
+            <tree string="Resource Bookings">
+                <field name="resource_id"/>
+                <field name="employee_id"/>
+                <field name="start_datetime"/>
+                <field name="end_datetime"/>
+                <field name="state" widget="badge" decoration-info="state == 'upcoming'" decoration-success="state == 'ongoing'" decoration-muted="state == 'completed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_booking_form" model="ir.ui.view">
+        <field name="name">assetflow.booking.form</field>
+        <field name="model">assetflow.booking</field>
+        <field name="arch" type="xml">
+            <form string="Resource Booking">
+                <sheet>
+                    <group>
+                        <field name="resource_id"/>
+                        <field name="employee_id"/>
+                        <field name="start_datetime"/>
+                        <field name="end_datetime"/>
+                        <field name="state"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== MAINTENANCE VIEWS ==================== -->
+    <record id="view_maintenance_tree" model="ir.ui.view">
+        <field name="name">assetflow.maintenance.tree</field>
+        <field name="model">assetflow.maintenance</field>
+        <field name="arch" type="xml">
+            <tree string="Maintenance Requests">
+                <field name="asset_id"/>
+                <field name="issue"/>
+                <field name="priority" widget="badge" decoration-danger="priority == 'high'" decoration-warning="priority == 'medium'" decoration-info="priority == 'low'"/>
+                <field name="technician_id"/>
+                <field name="state" widget="badge" decoration-warning="state == 'pending'" decoration-info="state in ('approved', 'assigned', 'in_progress')" decoration-success="state == 'resolved'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_maintenance_form" model="ir.ui.view">
+        <field name="name">assetflow.maintenance.form</field>
+        <field name="model">assetflow.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Request">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="asset_id"/>
+                            <field name="priority"/>
+                        </group>
+                        <group>
+                            <field name="technician_id"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Issue Description">
+                        <field name="issue" placeholder="Describe the issue..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== ALLOCATION VIEWS ==================== -->
+    <record id="view_allocation_tree" model="ir.ui.view">
+        <field name="name">assetflow.allocation.tree</field>
+        <field name="model">assetflow.allocation</field>
+        <field name="arch" type="xml">
+            <tree string="Allocations">
+                <field name="asset_id"/>
+                <field name="employee_id"/>
+                <field name="create_date" string="Allocation Date"/>
+                <field name="expected_return_date"/>
+                <field name="actual_return_date"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'" decoration-muted="state == 'returned'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ==================== TRANSFER REQUEST VIEWS ==================== -->
+    <record id="view_transfer_request_tree" model="ir.ui.view">
+        <field name="name">assetflow.transfer.request.tree</field>
+        <field name="model">assetflow.transfer.request</field>
+        <field name="arch" type="xml">
+            <tree string="Transfer Requests">
+                <field name="asset_id"/>
+                <field name="from_employee_id"/>
+                <field name="to_employee_id"/>
+                <field name="create_date" string="Request Date"/>
+                <field name="state" widget="badge" decoration-warning="state == 'requested'" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+</odoo>
