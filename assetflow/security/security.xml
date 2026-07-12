@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
         <!-- Security Category -->
         <record id="module_category_assetflow" model="ir.module.category">
             <name>AssetFlow</name>
@@ -82,5 +81,4 @@
             <domain_force>[(1, '=', 1)]</domain_force>
             <groups eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
         </record>
-    </data>
 </odoo>
