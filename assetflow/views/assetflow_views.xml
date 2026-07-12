@@ -30,13 +30,13 @@
         <field name="model">assetflow.asset</field>
         <field name="arch" type="xml">
             <tree string="Assets">
-                <field name="tag"/>
+                <field name="tag" help="Unique inventory tag identifier"/>
                 <field name="name"/>
-                <field name="category_id"/>
+                <field name="category_id" help="Asset classification category"/>
                 <field name="serial_no"/>
-                <field name="condition" widget="badge" decoration-success="condition == 'good'" decoration-warning="condition == 'fair'" decoration-danger="condition == 'poor'"/>
-                <field name="location"/>
-                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'" decoration-danger="state in ('lost', 'retired', 'disposed', 'reserved')"/>
+                <field name="condition" widget="badge" decoration-success="condition == 'good'" decoration-warning="condition == 'fair'" decoration-danger="condition == 'poor'" help="Current physical wear and tear rating"/>
+                <field name="location" help="Assigned office room or physical floor location"/>
+                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'" decoration-danger="state in ('lost', 'retired', 'disposed', 'reserved')" help="Status color legend: Green = Available, Blue = Allocated, Orange = Maintenance, Red = Lost/Retired"/>
             </tree>
         </field>
     </record>
@@ -55,17 +55,17 @@
                     </div>
                     <group>
                         <group>
-                            <field name="category_id"/>
-                            <field name="serial_no"/>
-                            <field name="condition"/>
-                            <field name="location"/>
+                            <field name="category_id" help="Category classification of this asset"/>
+                            <field name="serial_no" help="Manufacturer's serial number"/>
+                            <field name="condition" help="Physical wear condition of this asset"/>
+                            <field name="location" help="Current physical office room or floor location"/>
                         </group>
                         <group>
-                            <field name="acquisition_date"/>
-                            <field name="acquisition_cost"/>
-                            <field name="is_bookable"/>
-                            <field name="department_id"/>
-                            <field name="state"/>
+                            <field name="acquisition_date" help="Purchase/Acquisition date"/>
+                            <field name="acquisition_cost" help="Purchase cost in USD"/>
+                            <field name="is_bookable" help="Check this if this is a shared resource that can be booked via the calendar"/>
+                            <field name="department_id" help="Asset department assignment"/>
+                            <field name="state" help="Current lifecycle state (Green=Available, Blue=Allocated, Orange=Maintenance, Red=Lost/Retired)"/>
                         </group>
                     </group>
                 </sheet>
