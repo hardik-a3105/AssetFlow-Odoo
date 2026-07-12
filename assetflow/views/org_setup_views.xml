@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Server Action to open settings -->
+    <record id="action_assetflow_org_setup_server" model="ir.actions.server">
+        <name>Organization Setup</name>
+        <model_id ref="model_assetflow_org_setup"/>
+        <state>code</state>
+        <code eval="action = model.action_open_setup()"/>
+    </record>
+
+    <!-- Menu Item for Org Setup -->
+    <menuitem id="menu_assetflow_org_setup" name="Organization Setup" parent="menu_assetflow_root" action="action_assetflow_org_setup_server" sequence="20" groups="group_assetflow_admin"/>
+
+    <!-- Form View -->
+    <record id="view_org_setup_form" model="ir.ui.view">
+        <name>assetflow.org.setup.form</name>
+        <model>assetflow.org.setup</model>
+        <arch type="xml">
+            <form string="Organization Setup" create="false" delete="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Organization Setup Settings</h1>
+                    </div>
+                    <notebook>
+                        <!-- Departments Page -->
+                        <page string="Departments">
+                            <field name="department_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="head_id" options="{'no_create': True}"/>
+                                    <field name="parent_id" domain="[('id', '!=', id)]" options="{'no_create': True}"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!-- Categories Page -->
+                        <page string="Categories">
+                            <field name="category_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="warranty_period"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!-- Employees Page -->
+                        <page string="Employee Directory">
+                            <field name="employee_ids" mode="tree" readonly="1">
+                                <tree create="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="login" string="Email"/>
+                                    <field name="department_id"/>
+                                    <field name="role" widget="badge" decoration-info="role == 'employee'" decoration-warning="role == 'dept_head'" decoration-success="role == 'manager'" decoration-danger="role == 'admin'"/>
+                                    <field name="active" string="Active"/>
+                                    <button name="action_promote_dept_head" string="Promote to Head" type="object" class="btn-secondary" icon="fa-user-secret" help="Add user to Department Head group"/>
+                                    <button name="action_promote_manager" string="Promote to Manager" type="object" class="btn-primary" icon="fa-user-plus" help="Add user to Asset Manager group"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </arch>
+    </record>
+</odoo>

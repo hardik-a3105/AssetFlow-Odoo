@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Client Action Definition -->
+    <record id="action_assetflow_dashboard" model="ir.actions.client">
+        <name>Dashboard</name>
+        <tag>assetflow_dashboard</tag>
+    </record>
+
+    <!-- Main Menus -->
+    <menuitem id="menu_assetflow_root" name="AssetFlow" web_icon="assetflow,static/description/icon.png" sequence="1"/>
+    
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_assetflow_dashboard" name="Dashboard" parent="menu_assetflow_root" action="action_assetflow_dashboard" sequence="10"/>
+</odoo>

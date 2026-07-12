@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_assetflow_asset" model="ir.sequence">
+            <name>Asset Tag</name>
+            <code>assetflow.asset</code>
+            <prefix>AF-</prefix>
+            <padding>4</padding>
+            <number_increment>1</number_increment>
+            <number_next>1</number_next>
+        </record>
+    </data>
+</odoo>

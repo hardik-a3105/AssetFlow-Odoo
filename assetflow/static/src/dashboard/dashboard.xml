@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="assetflow.Dashboard" owl="1">
+        <div class="o_assetflow_dashboard_container">
+            <!-- Warning Banner -->
+            <t t-if="state.data.overdue &amp;&amp; state.data.overdue.count &gt; 0">
+                <div class="overdue-banner">
+                    <span class="warning-icon">⚠</span>
+                    <span class="warning-text">
+                        <t t-esc="state.data.overdue.count"/> assets overdue for return - Flagged for follow-up!
+                    </span>
+                    <button class="view-overdue-btn" t-on-click="viewOverdue">View Details</button>
+                </div>
+            </t>
+
+            <!-- Main Title & Quick Actions -->
+            <div class="dashboard-header-row">
+                <h1 class="dashboard-main-title">Today's Overview</h1>
+                <div class="quick-actions-bar">
+                    <button class="btn-action action-register" t-on-click="registerAsset">
+                        <span class="btn-icon">+</span> Register Asset
+                    </button>
+                    <button class="btn-action action-book" t-on-click="bookResource">
+                        <span class="btn-icon">📅</span> Book Resource
+                    </button>
+                    <button class="btn-action action-maintenance" t-on-click="raiseMaintenance">
+                        <span class="btn-icon">🔧</span> Raise Request
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="kpi-grid">
+                <!-- Card 1 -->
+                <div class="kpi-card glass-panel available-card" t-on-click="() => this.filterAssets('available')">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">✔</span>
+                        <span class="kpi-title">Available Assets</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.available_assets"/></div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="kpi-card glass-panel allocated-card" t-on-click="() => this.filterAssets('allocated')">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">🤝</span>
+                        <span class="kpi-title">Allocated Assets</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.allocated_assets"/></div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="kpi-card glass-panel bookable-card" t-on-click="() => this.filterAssets('bookable')">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">💻</span>
+                        <span class="kpi-title">Available Bookable Resources</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.bookable_resources"/></div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="kpi-card glass-panel bookings-card" t-on-click="viewBookings">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">📅</span>
+                        <span class="kpi-title">Active Bookings</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.active_bookings"/></div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="kpi-card glass-panel transfers-card" t-on-click="viewTransfers">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">🔄</span>
+                        <span class="kpi-title">Pending Transfers</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.pending_transfers"/></div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="kpi-card glass-panel returns-card" t-on-click="viewUpcomingReturns">
+                    <div class="kpi-card-header">
+                        <span class="kpi-icon">🕒</span>
+                        <span class="kpi-title">Upcoming Returns</span>
+                    </div>
+                    <div class="kpi-value"><t t-esc="state.data.kpis.upcoming_returns"/></div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="activity-section glass-panel">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                </div>
+                <div class="activity-list">
+                    <t t-if="state.data.activities &amp;&amp; state.data.activities.length &gt; 0">
+                        <t t-foreach="state.data.activities" t-as="act" t-key="act.id">
+                            <div class="activity-item">
+                                <div class="activity-time"><t t-esc="act.date"/></div>
+                                <div class="activity-body">
+                                    <strong><t t-esc="act.author"/></strong>: <t t-esc="act.body"/>
+                                    <t t-if="act.record_name">
+                                        (on <t t-esc="act.record_name"/>)
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <div class="no-activity">No recent activities found.</div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
