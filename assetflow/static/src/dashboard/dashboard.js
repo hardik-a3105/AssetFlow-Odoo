@@ -49,7 +49,7 @@ export class AssetFlowDashboard extends Component {
             name: "Register Asset",
             res_model: "assetflow.asset",
             views: [[false, "form"]],
-            target: "new"
+            target: "current"
         });
     }
 
@@ -59,7 +59,7 @@ export class AssetFlowDashboard extends Component {
             name: "Book Resource",
             res_model: "assetflow.booking",
             views: [[false, "form"]],
-            target: "new"
+            target: "current"
         });
     }
 
@@ -69,7 +69,7 @@ export class AssetFlowDashboard extends Component {
             name: "Raise Maintenance Request",
             res_model: "assetflow.maintenance",
             views: [[false, "form"]],
-            target: "new"
+            target: "current"
         });
     }
 
