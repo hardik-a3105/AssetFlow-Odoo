@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- ==================== ASSET SEARCH VIEW ==================== -->
+    <record id="view_asset_search" model="ir.ui.view">
+        <field name="name">assetflow.asset.search</field>
+        <field name="model">assetflow.asset</field>
+        <field name="arch" type="xml">
+            <search string="Search Assets">
+                <field name="name"/>
+                <field name="tag"/>
+                <field name="serial_no"/>
+                <field name="category_id"/>
+                <field name="department_id"/>
+                <filter string="Available" name="available" domain="[('state', '=', 'available')]"/>
+                <filter string="Allocated" name="allocated" domain="[('state', '=', 'allocated')]"/>
+                <filter string="Maintenance" name="maintenance" domain="[('state', '=', 'maintenance')]"/>
+                <filter string="Bookable" name="bookable" domain="[('is_bookable', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_by_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'state'}"/>
+                    <filter string="Department" name="group_by_department" context="{'group_by': 'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- ==================== ASSET VIEWS ==================== -->
     <record id="view_asset_tree" model="ir.ui.view">
         <field name="name">assetflow.asset.tree</field>
@@ -12,7 +36,7 @@
                 <field name="serial_no"/>
                 <field name="condition" widget="badge" decoration-success="condition == 'good'" decoration-warning="condition == 'fair'" decoration-danger="condition == 'poor'"/>
                 <field name="location"/>
-                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'"/>
+                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'" decoration-danger="state in ('lost', 'retired', 'disposed', 'reserved')"/>
             </tree>
         </field>
     </record>
@@ -55,6 +79,18 @@
     </record>
 
     <!-- ==================== BOOKING VIEWS ==================== -->
+    <record id="view_booking_calendar" model="ir.ui.view">
+        <field name="name">assetflow.booking.calendar</field>
+        <field name="model">assetflow.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Resource Bookings" date_start="start_datetime" date_stop="end_datetime" color="resource_id" quick_create="false">
+                <field name="employee_id"/>
+                <field name="resource_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
     <record id="view_booking_tree" model="ir.ui.view">
         <field name="name">assetflow.booking.tree</field>
         <field name="model">assetflow.booking</field>
@@ -88,6 +124,39 @@
     </record>
 
     <!-- ==================== MAINTENANCE VIEWS ==================== -->
+    <record id="view_maintenance_kanban" model="ir.ui.view">
+        <field name="name">assetflow.maintenance.kanban</field>
+        <field name="model">assetflow.maintenance</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" records_draggable="true" quick_create="false">
+                <field name="state"/>
+                <field name="priority"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong><field name="asset_id"/></strong>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="issue"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="technician_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_maintenance_tree" model="ir.ui.view">
         <field name="name">assetflow.maintenance.tree</field>
         <field name="model">assetflow.maintenance</field>
@@ -147,6 +216,44 @@
         </field>
     </record>
 
+    <record id="view_allocation_form" model="ir.ui.view">
+        <field name="name">assetflow.allocation.form</field>
+        <field name="model">assetflow.allocation</field>
+        <field name="arch" type="xml">
+            <form string="Asset Allocation">
+                <sheet>
+                    <field name="asset_state" invisible="1"/>
+                    <div class="alert alert-warning text-center" role="alert" invisible="asset_state != 'allocated'">
+                        <strong>Warning!</strong> This asset is already allocated. Direct re-allocation is blocked.
+                        Please use the button below to submit a transfer request.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="asset_id" domain="[('state', 'in', ('available', 'allocated'))]"/>
+                            <field name="employee_id"/>
+                        </group>
+                        <group>
+                            <field name="expected_return_date"/>
+                            <field name="actual_return_date" invisible="state == 'active'"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                    <group string="Condition Notes">
+                        <field name="condition_notes"/>
+                    </group>
+                    <group invisible="asset_state != 'allocated'">
+                        <button name="action_create_transfer" string="Create Transfer Request" type="object" class="btn-warning"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
     <!-- ==================== TRANSFER REQUEST VIEWS ==================== -->
     <record id="view_transfer_request_tree" model="ir.ui.view">
         <field name="name">assetflow.transfer.request.tree</field>
@@ -161,4 +268,68 @@
             </tree>
         </field>
     </record>
+
+    <record id="view_transfer_request_form" model="ir.ui.view">
+        <field name="name">assetflow.transfer.request.form</field>
+        <field name="model">assetflow.transfer.request</field>
+        <field name="arch" type="xml">
+            <form string="Asset Transfer Request">
+                <header>
+                    <button name="action_approve" string="Approve &amp; Reallocate" type="object" class="btn-success" invisible="state != 'requested'"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'requested'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="requested,approved,rejected,reallocated"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="asset_id" readonly="state != 'requested'"/>
+                            <field name="from_employee_id" readonly="1" force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="to_employee_id" readonly="state != 'requested'"/>
+                        </group>
+                    </group>
+                    <group string="Reason for Transfer">
+                        <field name="reason" placeholder="Explain why this transfer is needed..." readonly="state != 'requested'"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== WINDOW ACTIONS ==================== -->
+    <record id="action_assetflow_asset" model="ir.actions.act_window">
+        <field name="name">Assets</field>
+        <field name="res_model">assetflow.asset</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_asset_search"/>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_assetflow_allocation" model="ir.actions.act_window">
+        <field name="name">Allocations</field>
+        <field name="res_model">assetflow.allocation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_assetflow_booking" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">assetflow.booking</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_assetflow_maintenance" model="ir.actions.act_window">
+        <field name="name">Maintenance Requests</field>
+        <field name="res_model">assetflow.maintenance</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ==================== SUB-MENUS ==================== -->
+    <menuitem id="menu_assetflow_assets" name="Assets" parent="menu_assetflow_root" action="action_assetflow_asset" sequence="15"/>
+    <menuitem id="menu_assetflow_allocations" name="Allocations" parent="menu_assetflow_root" action="action_assetflow_allocation" sequence="16"/>
+    <menuitem id="menu_assetflow_bookings" name="Bookings" parent="menu_assetflow_root" action="action_assetflow_booking" sequence="17"/>
+    <menuitem id="menu_assetflow_maintenance" name="Maintenance" parent="menu_assetflow_root" action="action_assetflow_maintenance" sequence="18"/>
 </odoo>

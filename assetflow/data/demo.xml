@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== DEPARTMENTS ==================== -->
+    <record id="dept_engineering" model="assetflow.department">
+        <field name="name">Engineering</field>
+        <field name="code">ENG</field>
+        <field name="status">active</field>
+    </record>
+
+    <record id="dept_finance" model="assetflow.department">
+        <field name="name">Finance &amp; Accounts</field>
+        <field name="code">FIN</field>
+        <field name="status">active</field>
+    </record>
+
+    <!-- ==================== CATEGORIES ==================== -->
+    <record id="cat_laptops" model="assetflow.category">
+        <field name="name">Laptops &amp; Workstations</field>
+        <field name="warranty_period">36</field>
+    </record>
+
+    <record id="cat_furniture" model="assetflow.category">
+        <field name="name">Office Furniture</field>
+        <field name="warranty_period">60</field>
+    </record>
+
+    <record id="cat_mobiles" model="assetflow.category">
+        <field name="name">Mobile Devices</field>
+        <field name="warranty_period">24</field>
+    </record>
+
+    <record id="cat_servers" model="assetflow.category">
+        <field name="name">Server Infrastructure</field>
+        <field name="warranty_period">48</field>
+    </record>
+
+    <!-- ==================== PARTNERS & USERS ==================== -->
+    <!-- John Doe (Employee) -->
+    <record id="partner_john" model="res.partner">
+        <field name="name">John Doe</field>
+        <field name="email">john@example.com</field>
+    </record>
+    <record id="user_john" model="res.users">
+        <field name="name">John Doe</field>
+        <field name="login">john@example.com</field>
+        <field name="partner_id" ref="partner_john"/>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user'), ref('assetflow.group_assetflow_employee')])]"/>
+    </record>
+
+    <!-- Jane Smith (Department Head) -->
+    <record id="partner_jane" model="res.partner">
+        <field name="name">Jane Smith</field>
+        <field name="email">jane@example.com</field>
+    </record>
+    <record id="user_jane" model="res.users">
+        <field name="name">Jane Smith</field>
+        <field name="login">jane@example.com</field>
+        <field name="partner_id" ref="partner_jane"/>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user'), ref('assetflow.group_assetflow_employee'), ref('assetflow.group_assetflow_dept_head')])]"/>
+    </record>
+
+    <!-- Alice Johnson (Asset Manager) -->
+    <record id="partner_alice" model="res.partner">
+        <field name="name">Alice Johnson</field>
+        <field name="email">alice@example.com</field>
+    </record>
+    <record id="user_alice" model="res.users">
+        <field name="name">Alice Johnson</field>
+        <field name="login">alice@example.com</field>
+        <field name="partner_id" ref="partner_alice"/>
+        <field name="department_id" ref="dept_finance"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user'), ref('assetflow.group_assetflow_employee'), ref('assetflow.group_assetflow_manager')])]"/>
+    </record>
+
+    <!-- Bob Miller (Admin) -->
+    <record id="partner_bob" model="res.partner">
+        <field name="name">Bob Miller</field>
+        <field name="email">bob@example.com</field>
+    </record>
+    <record id="user_bob" model="res.users">
+        <field name="name">Bob Miller</field>
+        <field name="login">bob@example.com</field>
+        <field name="partner_id" ref="partner_bob"/>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user'), ref('assetflow.group_assetflow_employee'), ref('assetflow.group_assetflow_admin')])]"/>
+    </record>
+
+    <!-- Link heads to departments -->
+    <record id="dept_engineering" model="assetflow.department">
+        <field name="head_id" ref="user_jane"/>
+    </record>
+
+    <!-- ==================== ASSETS ==================== -->
+    <record id="asset_1" model="assetflow.asset">
+        <field name="name">Laptop Lenovo T14 Gen 4</field>
+        <field name="category_id" ref="cat_laptops"/>
+        <field name="serial_no">PF-3E9X8L</field>
+        <field name="condition">good</field>
+        <field name="location">Bangalore HQ - Floor 3</field>
+        <field name="is_bookable">True</field>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="state">available</field>
+    </record>
+
+    <record id="asset_2" model="assetflow.asset">
+        <field name="name">Dell UltraSharp 27 Monitor</field>
+        <field name="category_id" ref="cat_laptops"/>
+        <field name="serial_no">CN-0D3X18</field>
+        <field name="condition">good</field>
+        <field name="location">Bangalore HQ - Floor 3</field>
+        <field name="is_bookable">False</field>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="state">allocated</field>
+    </record>
+
+    <record id="asset_3" model="assetflow.asset">
+        <field name="name">MacBook Pro 16 M3 Max</field>
+        <field name="category_id" ref="cat_laptops"/>
+        <field name="serial_no">C02FX9L0Q05D</field>
+        <field name="condition">good</field>
+        <field name="location">Remote - Work From Home</field>
+        <field name="is_bookable">False</field>
+        <field name="department_id" ref="dept_finance"/>
+        <field name="state">allocated</field>
+    </record>
+
+    <record id="asset_4" model="assetflow.asset">
+        <field name="name">Jabra Speak 750 Speakerphone</field>
+        <field name="category_id" ref="cat_furniture"/>
+        <field name="serial_no">JB-998822</field>
+        <field name="condition">good</field>
+        <field name="location">Conf Room Alfa</field>
+        <field name="is_bookable">True</field>
+        <field name="state">reserved</field>
+    </record>
+
+    <record id="asset_5" model="assetflow.asset">
+        <field name="name">iPhone 15 Pro Max 512GB</field>
+        <field name="category_id" ref="cat_mobiles"/>
+        <field name="serial_no">DX3G98X4L0</field>
+        <field name="condition">fair</field>
+        <field name="location">IT Support Desk</field>
+        <field name="is_bookable">False</field>
+        <field name="state">maintenance</field>
+    </record>
+
+    <record id="asset_6" model="assetflow.asset">
+        <field name="name">iPad Air 5th Gen</field>
+        <field name="category_id" ref="cat_mobiles"/>
+        <field name="serial_no">GG-554433</field>
+        <field name="condition">good</field>
+        <field name="location">Reception Desk</field>
+        <field name="is_bookable">True</field>
+        <field name="state">available</field>
+    </record>
+
+    <record id="asset_7" model="assetflow.asset">
+        <field name="name">Cisco Catalyst 24-Port Switch</field>
+        <field name="category_id" ref="cat_servers"/>
+        <field name="serial_no">CS-9831A2</field>
+        <field name="condition">fair</field>
+        <field name="location">Server Room A</field>
+        <field name="is_bookable">False</field>
+        <field name="state">available</field>
+    </record>
+
+    <record id="asset_8" model="assetflow.asset">
+        <field name="name">Ergonomic Office Chair</field>
+        <field name="category_id" ref="cat_furniture"/>
+        <field name="serial_no">FN-445588</field>
+        <field name="condition">good</field>
+        <field name="location">Bangalore HQ - Cabin 2</field>
+        <field name="is_bookable">False</field>
+        <field name="state">available</field>
+    </record>
+
+    <record id="asset_9" model="assetflow.asset">
+        <field name="name">Epson 4K Projector Pro</field>
+        <field name="category_id" ref="cat_furniture"/>
+        <field name="serial_no">EP-559988</field>
+        <field name="condition">good</field>
+        <field name="location">Training Hall 1</field>
+        <field name="is_bookable">True</field>
+        <field name="state">available</field>
+    </record>
+
+    <!-- ==================== ALLOCATIONS ==================== -->
+    <record id="alloc_1" model="assetflow.allocation">
+        <field name="asset_id" ref="asset_2"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="expected_return_date">2026-10-12</field>
+        <field name="state">active</field>
+        <field name="condition_notes">Issued with all cables intact.</field>
+    </record>
+
+    <record id="alloc_2" model="assetflow.allocation">
+        <field name="asset_id" ref="asset_3"/>
+        <field name="employee_id" ref="user_jane"/>
+        <field name="expected_return_date">2026-11-12</field>
+        <field name="state">active</field>
+        <field name="condition_notes">Issued in brand new boxed condition.</field>
+    </record>
+
+    <!-- ==================== BOOKINGS ==================== -->
+    <!-- Booking 1: Conflicting meeting slot (Jabra Speakerphone) -->
+    <record id="booking_1" model="assetflow.booking">
+        <field name="resource_id" ref="asset_4"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="start_datetime">2026-07-12 14:00:00</field>
+        <field name="end_datetime">2026-07-12 16:00:00</field>
+        <field name="state">upcoming</field>
+    </record>
+
+    <!-- Booking 2: Projector booking -->
+    <record id="booking_2" model="assetflow.booking">
+        <field name="resource_id" ref="asset_9"/>
+        <field name="employee_id" ref="user_bob"/>
+        <field name="start_datetime">2026-07-12 10:00:00</field>
+        <field name="end_datetime">2026-07-12 12:00:00</field>
+        <field name="state">upcoming</field>
+    </record>
+
+    <!-- ==================== MAINTENANCE REQUESTS ==================== -->
+    <!-- Maintenance 1: Approved, Assigned to Bob Miller -->
+    <record id="maint_1" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_5"/>
+        <field name="issue">Screen is cracked and flickering.</field>
+        <field name="priority">high</field>
+        <field name="technician_id" ref="user_bob"/>
+        <field name="state">approved</field>
+    </record>
+
+    <!-- Maintenance 2: Pending, Assigned to Jane Smith -->
+    <record id="maint_2" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_6"/>
+        <field name="issue">Battery depleting extremely rapidly (drains in 1 hour).</field>
+        <field name="priority">medium</field>
+        <field name="technician_id" ref="user_jane"/>
+        <field name="state">pending</field>
+    </record>
+
+    <!-- Maintenance 3: In Progress, Assigned to John Doe -->
+    <record id="maint_3" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_7"/>
+        <field name="issue">Port 14 and Port 15 not link-negotiating.</field>
+        <field name="priority">low</field>
+        <field name="technician_id" ref="user_john"/>
+        <field name="state">in_progress</field>
+    </record>
+</odoo>

@@ -18,6 +18,7 @@ class AssetflowAllocation(models.Model):
     ], string='Status', default='active', tracking=True)
     condition_notes = fields.Text(string='Condition Notes')
     is_overdue = fields.Boolean(string='Overdue', compute='_compute_is_overdue')
+    asset_state = fields.Selection(related='asset_id.state', string="Asset Status")
 
     @api.depends('state', 'expected_return_date')
     def _compute_is_overdue(self):
@@ -64,3 +65,17 @@ class AssetflowAllocation(models.Model):
                 elif record.state == 'returned':
                     record.asset_id.state = 'available'
         return res
+
+    def action_create_transfer(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Transfer Request',
+            'res_model': 'assetflow.transfer.request',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_asset_id': self.asset_id.id,
+                'default_to_employee_id': self.employee_id.id,
+            }
+        }

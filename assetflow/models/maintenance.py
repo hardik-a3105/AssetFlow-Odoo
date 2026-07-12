@@ -46,3 +46,15 @@ class AssetflowMaintenance(models.Model):
     def action_reject(self):
         for record in self:
             record.write({'state': 'rejected'})
+
+    def write(self, vals):
+        res = super(AssetflowMaintenance, self).write(vals)
+        if 'state' in vals:
+            for record in self:
+                if record.state == 'approved':
+                    if record.asset_id:
+                        record.asset_id.state = 'maintenance'
+                elif record.state == 'resolved':
+                    if record.asset_id:
+                        record.asset_id.state = 'available'
+        return res

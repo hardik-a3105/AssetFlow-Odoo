@@ -16,6 +16,7 @@
         'views/dashboard_views.xml',
         'views/org_setup_views.xml',
         'views/assetflow_views.xml',
+        'data/demo.xml',
     ],
     'assets': {
         'web.assets_backend': [
