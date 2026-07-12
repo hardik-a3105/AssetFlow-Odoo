@@ -14,7 +14,7 @@
             </t>
 
             <!-- Onboarding Quick Start Checklist -->
-            <div class="activity-section glass-panel" style="margin-bottom: 24px; padding: 20px; border-radius: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);">
+            <div class="activity-section glass-panel" style="margin-bottom: 24px; padding: 20px; border-radius: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.96);">
                 <h2 style="margin-top: 0; font-size: 1.2rem; color: #1e293b; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                     <span>🚀</span> Quick Start Checklist
                 </h2>

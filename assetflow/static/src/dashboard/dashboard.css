@@ -1,26 +1,26 @@
 .o_assetflow_dashboard_container {
     padding: 24px;
-    background: radial-gradient(circle at top left, #f8fafc, #f1f5f9);
+    background: #f1f5f9;
     height: 100%;
     color: #334155;
     font-family: 'Inter', sans-serif;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Glassmorphism Panel */
+/* Optimized Panel */
 .glass-panel {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.96);
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.12);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.1);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel:hover {
     border-color: rgba(15, 23, 42, 0.15);
-    box-shadow: 0 12px 40px 0 rgba(148, 163, 184, 0.22);
+    box-shadow: 0 12px 40px 0 rgba(148, 163, 184, 0.18);
     transform: translateY(-2px);
 }
 
