@@ -22,6 +22,7 @@ class AssetflowMaintenance(models.Model):
         ('resolved', 'Resolved'),
         ('rejected', 'Rejected')
     ], string='Status', default='pending', tracking=True)
+    category_id = fields.Many2one('assetflow.category', related='asset_id.category_id', string='Category', store=True)
 
     def action_approve(self):
         for record in self:

@@ -16,6 +16,22 @@ class AssetflowAuditCycle(models.Model):
         ('closed', 'Closed')
     ], string='Status', default='draft')
     line_ids = fields.One2many('assetflow.audit.line', 'cycle_id', string='Audit Lines')
+    discrepancy_summary = fields.Text(string='Discrepancy Summary', compute='_compute_discrepancy_summary')
+
+    @api.depends('line_ids.result')
+    def _compute_discrepancy_summary(self):
+        for cycle in self:
+            verified = len(cycle.line_ids.filtered(lambda l: l.result == 'verified'))
+            missing = len(cycle.line_ids.filtered(lambda l: l.result == 'missing'))
+            damaged = len(cycle.line_ids.filtered(lambda l: l.result == 'damaged'))
+            unverified = len(cycle.line_ids.filtered(lambda l: not l.result))
+            
+            summary = f"Total Assets Audited: {len(cycle.line_ids)}\n"
+            summary += f"- Verified: {verified}\n"
+            summary += f"- Missing: {missing} (Will be marked as 'Lost' on cycle close)\n"
+            summary += f"- Damaged: {damaged} (Recommend maintenance request)\n"
+            summary += f"- Pending Verification: {unverified}"
+            cycle.discrepancy_summary = summary
 
     def action_start(self):
         for record in self:
@@ -58,3 +74,15 @@ class AssetflowAuditLine(models.Model):
     def _onchange_asset_id(self):
         if self.asset_id:
             self.expected_location = self.asset_id.location
+
+    def action_set_verified(self):
+        for record in self:
+            record.write({'result': 'verified'})
+
+    def action_set_missing(self):
+        for record in self:
+            record.write({'result': 'missing'})
+
+    def action_set_damaged(self):
+        for record in self:
+            record.write({'result': 'damaged'})

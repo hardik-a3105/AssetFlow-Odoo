@@ -249,4 +249,30 @@
         <field name="technician_id" ref="user_john"/>
         <field name="state">in_progress</field>
     </record>
+
+    <!-- ==================== COMPLETED/HISTORY RECORDS ==================== -->
+    <record id="alloc_3" model="assetflow.allocation">
+        <field name="asset_id" ref="asset_6"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="expected_return_date">2026-06-30</field>
+        <field name="actual_return_date">2026-06-28</field>
+        <field name="state">returned</field>
+        <field name="condition_notes">Returned with original charger.</field>
+    </record>
+
+    <record id="booking_3" model="assetflow.booking">
+        <field name="resource_id" ref="asset_6"/>
+        <field name="employee_id" ref="user_alice"/>
+        <field name="start_datetime">2026-07-10 10:00:00</field>
+        <field name="end_datetime">2026-07-10 12:00:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="maint_4" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_1"/>
+        <field name="issue">Keycaps 'W' and 'S' popped out.</field>
+        <field name="priority">low</field>
+        <field name="technician_id" ref="user_alice"/>
+        <field name="state">resolved</field>
+    </record>
 </odoo>

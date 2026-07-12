@@ -297,6 +297,73 @@
         </field>
     </record>
 
+    <!-- ==================== AUDIT CYCLE VIEWS ==================== -->
+    <record id="view_audit_cycle_tree" model="ir.ui.view">
+        <field name="name">assetflow.audit.cycle.tree</field>
+        <field name="model">assetflow.audit.cycle</field>
+        <field name="arch" type="xml">
+            <tree string="Audit Cycles">
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'in_progress'" decoration-success="state == 'closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_audit_cycle_form" model="ir.ui.view">
+        <field name="name">assetflow.audit.cycle.form</field>
+        <field name="model">assetflow.audit.cycle</field>
+        <field name="arch" type="xml">
+            <form string="Audit Cycle">
+                <header>
+                    <button name="action_start" string="Start Audit" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close" string="Close Cycle" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Q3 Engineering Audit"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="department_id" readonly="state != 'draft'"/>
+                            <field name="auditor_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="date_from" readonly="state != 'draft'"/>
+                            <field name="date_to" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Asset Checklist">
+                            <field name="line_ids" readonly="state == 'closed'">
+                                <tree create="false" delete="false" editable="bottom">
+                                    <field name="asset_id" readonly="1"/>
+                                    <field name="expected_location" readonly="1"/>
+                                    <field name="result" widget="badge" decoration-success="result == 'verified'" decoration-danger="result == 'missing'" decoration-warning="result == 'damaged'"/>
+                                    <!-- Object buttons to set result quickly -->
+                                    <button name="action_set_verified" string="Verify" type="object" class="btn-secondary" icon="fa-check text-success" invisible="parent.state != 'in_progress'"/>
+                                    <button name="action_set_missing" string="Mark Missing" type="object" class="btn-secondary" icon="fa-times text-danger" invisible="parent.state != 'in_progress'"/>
+                                    <button name="action_set_damaged" string="Mark Damaged" type="object" class="btn-secondary" icon="fa-exclamation text-warning" invisible="parent.state != 'in_progress'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Discrepancy Summary" invisible="state == 'draft'">
+                            <group>
+                                <field name="discrepancy_summary" readonly="1" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <!-- ==================== WINDOW ACTIONS ==================== -->
     <record id="action_assetflow_asset" model="ir.actions.act_window">
         <field name="name">Assets</field>
@@ -327,9 +394,119 @@
         <field name="target">current</field>
     </record>
 
+    <record id="action_assetflow_audit_cycle" model="ir.actions.act_window">
+        <field name="name">Audit Cycles</field>
+        <field name="res_model">assetflow.audit.cycle</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ==================== REPORT VIEWS ==================== -->
+    <!-- Utilization Report Views -->
+    <record id="view_asset_pivot" model="ir.ui.view">
+        <field name="name">assetflow.asset.pivot</field>
+        <field name="model">assetflow.asset</field>
+        <field name="arch" type="xml">
+            <pivot string="Asset Utilization">
+                <field name="department_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_asset_graph" model="ir.ui.view">
+        <field name="name">assetflow.asset.graph</field>
+        <field name="model">assetflow.asset</field>
+        <field name="arch" type="xml">
+            <graph string="Asset Utilization" type="bar">
+                <field name="department_id" type="row"/>
+                <field name="state" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Maintenance Report Views -->
+    <record id="view_maintenance_pivot" model="ir.ui.view">
+        <field name="name">assetflow.maintenance.pivot</field>
+        <field name="model">assetflow.maintenance</field>
+        <field name="arch" type="xml">
+            <pivot string="Maintenance Frequency">
+                <field name="category_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_maintenance_graph" model="ir.ui.view">
+        <field name="name">assetflow.maintenance.graph</field>
+        <field name="model">assetflow.maintenance</field>
+        <field name="arch" type="xml">
+            <graph string="Maintenance Frequency" type="pie">
+                <field name="category_id" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Most Used Assets Tree View -->
+    <record id="view_asset_tree_most_used" model="ir.ui.view">
+        <field name="name">assetflow.asset.tree.most_used</field>
+        <field name="model">assetflow.asset</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree string="Most-Used Assets" default_order="allocation_count desc" create="false" edit="false" delete="false">
+                <field name="tag"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="allocation_count" string="Total Allocations"/>
+                <field name="state" widget="badge" decoration-success="state == 'available'" decoration-info="state == 'allocated'" decoration-warning="state == 'maintenance'" decoration-danger="state in ('lost', 'retired', 'disposed', 'reserved')"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Window Actions: Reports -->
+    <record id="action_report_asset_utilization" model="ir.actions.act_window">
+        <field name="name">Asset Utilization</field>
+        <field name="res_model">assetflow.asset</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_report_maintenance_frequency" model="ir.actions.act_window">
+        <field name="name">Maintenance Frequency</field>
+        <field name="res_model">assetflow.maintenance</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_report_idle_assets" model="ir.actions.act_window">
+        <field name="name">Idle Assets</field>
+        <field name="res_model">assetflow.asset</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'available')]</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_report_most_used_assets" model="ir.actions.act_window">
+        <field name="name">Most-Used Assets</field>
+        <field name="res_model">assetflow.asset</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_asset_tree_most_used"/>
+        <field name="target">current</field>
+    </record>
+
     <!-- ==================== SUB-MENUS ==================== -->
     <menuitem id="menu_assetflow_assets" name="Assets" parent="menu_assetflow_root" action="action_assetflow_asset" sequence="15"/>
     <menuitem id="menu_assetflow_allocations" name="Allocations" parent="menu_assetflow_root" action="action_assetflow_allocation" sequence="16"/>
     <menuitem id="menu_assetflow_bookings" name="Bookings" parent="menu_assetflow_root" action="action_assetflow_booking" sequence="17"/>
     <menuitem id="menu_assetflow_maintenance" name="Maintenance" parent="menu_assetflow_root" action="action_assetflow_maintenance" sequence="18"/>
+    <menuitem id="menu_assetflow_audit_cycle" name="Audit Cycles" parent="menu_assetflow_root" action="action_assetflow_audit_cycle" sequence="19"/>
+    
+    <!-- Parent Menu: Reports -->
+    <menuitem id="menu_assetflow_reports" name="Reports &amp; Analytics" parent="menu_assetflow_root" sequence="40"/>
+    
+    <!-- Sub-menus under Reports -->
+    <menuitem id="menu_report_asset_utilization" name="Asset Utilization" parent="menu_assetflow_reports" action="action_report_asset_utilization" sequence="1"/>
+    <menuitem id="menu_report_maintenance_frequency" name="Maintenance Frequency" parent="menu_assetflow_reports" action="action_report_maintenance_frequency" sequence="2"/>
+    <menuitem id="menu_report_idle_assets" name="Idle Assets" parent="menu_assetflow_reports" action="action_report_idle_assets" sequence="3"/>
+    <menuitem id="menu_report_most_used_assets" name="Most-Used Assets" parent="menu_assetflow_reports" action="action_report_most_used_assets" sequence="4"/>
 </odoo>

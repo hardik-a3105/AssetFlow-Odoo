@@ -29,6 +29,13 @@ class AssetflowAsset(models.Model):
         ('retired', 'Retired'),
         ('disposed', 'Disposed')
     ], string='Status', default='available', tracking=True)
+    allocation_ids = fields.One2many('assetflow.allocation', 'asset_id', string='Allocations')
+    allocation_count = fields.Integer(string='Allocation Count', compute='_compute_allocation_count', store=True)
+
+    @api.depends('allocation_ids')
+    def _compute_allocation_count(self):
+        for asset in self:
+            asset.allocation_count = len(asset.allocation_ids)
 
     @api.model_create_multi
     def create(self, vals_list):
