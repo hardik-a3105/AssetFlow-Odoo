@@ -13,6 +13,36 @@
                 </div>
             </t>
 
+            <!-- Onboarding Quick Start Checklist -->
+            <div class="activity-section glass-panel" style="margin-bottom: 24px; padding: 20px; border-radius: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);">
+                <h2 style="margin-top: 0; font-size: 1.2rem; color: #1e293b; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span>🚀</span> Quick Start Checklist
+                </h2>
+                <div class="checklist-items" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
+                        <span style="font-size: 1.15rem; width: 24px;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_assets">✅</t>
+                            <t t-else="">⬜</t>
+                        </span>
+                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_assets) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Register your first asset</span>
+                    </div>
+                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
+                        <span style="font-size: 1.15rem; width: 24px;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_bookings">✅</t>
+                            <t t-else="">⬜</t>
+                        </span>
+                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_bookings) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Book a resource</span>
+                    </div>
+                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
+                        <span style="font-size: 1.15rem; width: 24px;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_maintenances">✅</t>
+                            <t t-else="">⬜</t>
+                        </span>
+                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_maintenances) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Raise a maintenance request</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Main Title & Quick Actions -->
             <div class="dashboard-header-row">
                 <h1 class="dashboard-main-title">Today's Overview</h1>

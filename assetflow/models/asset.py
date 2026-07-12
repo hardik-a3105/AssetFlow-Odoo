@@ -103,6 +103,11 @@ class AssetflowAsset(models.Model):
                 'pending_transfers': pending_transfers,
                 'upcoming_returns': upcoming_returns,
             },
+            'checklist': {
+                'has_assets': self.search_count([]) > 0,
+                'has_bookings': self.env['assetflow.booking'].search_count([]) > 0,
+                'has_maintenances': self.env['assetflow.maintenance'].search_count([]) > 0,
+            },
             'overdue': {
                 'count': overdue_count,
                 'list': overdue_list,
