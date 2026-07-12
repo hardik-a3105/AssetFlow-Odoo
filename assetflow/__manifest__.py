@@ -19,8 +19,6 @@
         'views/assetflow_views.xml',
         'data/ir_cron_data.xml',
         'data/mail_template_data.xml',
-    ],
-    'demo': [
         'data/demo.xml',
     ],
     'assets': {

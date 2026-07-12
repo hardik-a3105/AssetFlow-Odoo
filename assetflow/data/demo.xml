@@ -216,40 +216,25 @@
         <field name="state">in_progress</field>
     </record>
 
-    <!-- ==================== COMPLETED/HISTORY RECORDS ==================== -->
+    <!-- ==================== COMPLETED/HISTORY RECORDS (1 YEAR HISTORY) ==================== -->
+    
+    <!-- Historical Allocations (Returned) -->
     <record id="alloc_3" model="assetflow.allocation">
         <field name="asset_id" ref="asset_6"/>
         <field name="employee_id" ref="user_john"/>
         <field name="expected_return_date">2026-06-30</field>
         <field name="actual_return_date">2026-06-28</field>
         <field name="state">returned</field>
-        <field name="condition_notes">Returned with original charger.</field>
+        <field name="condition_notes">Returned with original charger. Casing clean.</field>
     </record>
 
-    <record id="booking_3" model="assetflow.booking">
-        <field name="resource_id" ref="asset_6"/>
-        <field name="employee_id" ref="user_alice"/>
-        <field name="start_datetime">2026-07-10 10:00:00</field>
-        <field name="end_datetime">2026-07-10 12:00:00</field>
-        <field name="state">completed</field>
-    </record>
-
-    <record id="maint_4" model="assetflow.maintenance">
-        <field name="asset_id" ref="asset_1"/>
-        <field name="issue">Keycaps 'W' and 'S' popped out.</field>
-        <field name="priority">low</field>
-        <field name="technician_id" ref="user_alice"/>
-        <field name="state">resolved</field>
-    </record>
-
-    <!-- Additional Allocation History Records -->
     <record id="alloc_4" model="assetflow.allocation">
         <field name="asset_id" ref="asset_1"/>
         <field name="employee_id" ref="user_alice"/>
         <field name="expected_return_date">2026-05-20</field>
         <field name="actual_return_date">2026-05-15</field>
         <field name="state">returned</field>
-        <field name="condition_notes">Returned in excellent condition.</field>
+        <field name="condition_notes">Returned in excellent condition. No wear.</field>
     </record>
 
     <record id="alloc_5" model="assetflow.allocation">
@@ -258,6 +243,153 @@
         <field name="expected_return_date">2026-06-15</field>
         <field name="actual_return_date">2026-06-10</field>
         <field name="state">returned</field>
-        <field name="condition_notes">Standard usage wear, minor bezel scratch.</field>
+        <field name="condition_notes">Standard usage wear, minor bezel scratch on left.</field>
+    </record>
+
+    <record id="alloc_6" model="assetflow.allocation">
+        <field name="asset_id" ref="asset_2"/>
+        <field name="employee_id" ref="user_jane"/>
+        <field name="expected_return_date">2025-12-15</field>
+        <field name="actual_return_date">2025-12-12</field>
+        <field name="state">returned</field>
+        <field name="condition_notes">Returned with original box and HDMI cable.</field>
+    </record>
+
+    <record id="alloc_7" model="assetflow.allocation">
+        <field name="asset_id" ref="asset_8"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="expected_return_date">2026-03-01</field>
+        <field name="actual_return_date">2026-02-28</field>
+        <field name="state">returned</field>
+        <field name="condition_notes">Returned clean, gas lift mechanism tested functional.</field>
+    </record>
+
+    <!-- Historical Bookings (Completed) -->
+    <record id="booking_3" model="assetflow.booking">
+        <field name="resource_id" ref="asset_6"/>
+        <field name="employee_id" ref="user_alice"/>
+        <field name="start_datetime">2025-07-10 10:00:00</field>
+        <field name="end_datetime">2025-07-10 12:00:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="booking_4" model="assetflow.booking">
+        <field name="resource_id" ref="asset_9"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="start_datetime">2025-09-15 09:00:00</field>
+        <field name="end_datetime">2025-09-15 11:30:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="booking_5" model="assetflow.booking">
+        <field name="resource_id" ref="asset_9"/>
+        <field name="employee_id" ref="user_jane"/>
+        <field name="start_datetime">2025-11-20 14:00:00</field>
+        <field name="end_datetime">2025-11-20 16:00:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="booking_6" model="assetflow.booking">
+        <field name="resource_id" ref="asset_4"/>
+        <field name="employee_id" ref="user_bob"/>
+        <field name="start_datetime">2026-01-18 11:00:00</field>
+        <field name="end_datetime">2026-01-18 13:00:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="booking_7" model="assetflow.booking">
+        <field name="resource_id" ref="asset_9"/>
+        <field name="employee_id" ref="user_alice"/>
+        <field name="start_datetime">2026-03-05 15:00:00</field>
+        <field name="end_datetime">2026-03-05 17:00:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <record id="booking_8" model="assetflow.booking">
+        <field name="resource_id" ref="asset_4"/>
+        <field name="employee_id" ref="user_john"/>
+        <field name="start_datetime">2026-05-12 10:00:00</field>
+        <field name="end_datetime">2026-05-12 11:30:00</field>
+        <field name="state">completed</field>
+    </record>
+
+    <!-- Historical Maintenance (Resolved) -->
+    <record id="maint_4" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_1"/>
+        <field name="issue">Keycaps 'W' and 'S' popped out.</field>
+        <field name="priority">low</field>
+        <field name="technician_id" ref="user_alice"/>
+        <field name="state">resolved</field>
+    </record>
+
+    <record id="maint_5" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_7"/>
+        <field name="issue">Firmware upgrade required for security vulnerability patch.</field>
+        <field name="priority">medium</field>
+        <field name="technician_id" ref="user_bob"/>
+        <field name="state">resolved</field>
+    </record>
+
+    <record id="maint_6" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_9"/>
+        <field name="issue">Projector lamp dim, requires complete replacement.</field>
+        <field name="priority">high</field>
+        <field name="technician_id" ref="user_alice"/>
+        <field name="state">resolved</field>
+    </record>
+
+    <record id="maint_7" model="assetflow.maintenance">
+        <field name="asset_id" ref="asset_5"/>
+        <field name="issue">System diagnostic restore required after OS loop crash.</field>
+        <field name="priority">low</field>
+        <field name="technician_id" ref="user_bob"/>
+        <field name="state">resolved</field>
+    </record>
+
+    <!-- Historical Audit Cycles (Completed & Closed) -->
+    <record id="audit_cycle_1" model="assetflow.audit.cycle">
+        <field name="name">Q3 2025 General Audit</field>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="date_from">2025-09-01</field>
+        <field name="date_to">2025-09-15</field>
+        <field name="state">closed</field>
+    </record>
+
+    <record id="audit_line_1_1" model="assetflow.audit.line">
+        <field name="cycle_id" ref="audit_cycle_1"/>
+        <field name="asset_id" ref="asset_1"/>
+        <field name="result">verified</field>
+    </record>
+
+    <record id="audit_line_1_2" model="assetflow.audit.line">
+        <field name="cycle_id" ref="audit_cycle_1"/>
+        <field name="asset_id" ref="asset_2"/>
+        <field name="result">verified</field>
+    </record>
+
+    <record id="audit_line_1_3" model="assetflow.audit.line">
+        <field name="cycle_id" ref="audit_cycle_1"/>
+        <field name="asset_id" ref="asset_5"/>
+        <field name="result">damaged</field>
+    </record>
+
+    <record id="audit_cycle_2" model="assetflow.audit.cycle">
+        <field name="name">Q1 2026 Bangalore Office Audit</field>
+        <field name="department_id" ref="dept_engineering"/>
+        <field name="date_from">2026-03-01</field>
+        <field name="date_to">2026-03-10</field>
+        <field name="state">closed</field>
+    </record>
+
+    <record id="audit_line_2_1" model="assetflow.audit.line">
+        <field name="cycle_id" ref="audit_cycle_2"/>
+        <field name="asset_id" ref="asset_3"/>
+        <field name="result">verified</field>
+    </record>
+
+    <record id="audit_line_2_2" model="assetflow.audit.line">
+        <field name="cycle_id" ref="audit_cycle_2"/>
+        <field name="asset_id" ref="asset_6"/>
+        <field name="result">verified</field>
     </record>
 </odoo>
