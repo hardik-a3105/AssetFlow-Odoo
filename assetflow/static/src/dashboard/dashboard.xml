@@ -182,8 +182,17 @@
                                                     <div class="feed-item">
                                                         <span class="feed-time"><t t-esc="act.date.split(' ')[1] || act.date"/></span>
                                                         <span class="feed-body">
-                                                            <strong><t t-esc="act.author"/></strong>: <t t-esc="act.body"/>
-                                                            <t t-if="act.record_name"> <span class="record-ref-badge"><t t-esc="act.record_name"/></span></t>
+                                                             <strong><t t-esc="act.author"/></strong>: 
+                                                             <t t-if="act.body &amp;&amp; act.body.trim()">
+                                                                 <t t-esc="act.body"/>
+                                                             </t>
+                                                             <t t-else="">
+                                                                 <t t-if="act.model_name == 'assetflow.allocation'">Custodian allocation updated</t>
+                                                                 <t t-elif="act.model_name == 'assetflow.booking'">Resource booking scheduled</t>
+                                                                 <t t-elif="act.model_name == 'assetflow.maintenance'">Maintenance request logged</t>
+                                                                 <t t-else="">System activity logged</t>
+                                                             </t>
+                                                             <t t-if="act.record_name"> <span class="record-ref-badge"><t t-esc="act.record_name"/></span></t>
                                                         </span>
                                                     </div>
                                                 </t>
@@ -899,7 +908,18 @@
                                                         <div class="feed-meta-row">
                                                             <span class="feed-date-tag"><t t-esc="l.date"/></span>
                                                         </div>
-                                                        <p class="feed-text-desc"><strong><t t-esc="l.author"/></strong>: <t t-esc="l.body"/></p>
+                                                        <p class="feed-text-desc">
+                                                            <strong><t t-esc="l.author"/></strong>: 
+                                                            <t t-if="l.body &amp;&amp; l.body.trim()">
+                                                                <t t-esc="l.body"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <t t-if="l.model_name == 'assetflow.allocation'">Custodian allocation updated</t>
+                                                                <t t-elif="l.model_name == 'assetflow.booking'">Resource booking scheduled</t>
+                                                                <t t-elif="l.model_name == 'assetflow.maintenance'">Maintenance request logged</t>
+                                                                <t t-else="">System activity logged</t>
+                                                            </t>
+                                                        </p>
                                                         <t t-if="l.record_name"><span class="badge-record-ref"><t t-esc="l.record_name"/></span></t>
                                                     </div>
                                                 </div>
