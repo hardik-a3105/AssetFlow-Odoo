@@ -2,156 +2,1139 @@
 <templates xml:space="preserve">
     <t t-name="assetflow.Dashboard" owl="1">
         <div class="o_assetflow_dashboard_container">
-            <!-- Warning Banner -->
-            <t t-if="state.data.overdue &amp;&amp; state.data.overdue.count &gt; 0">
-                <div class="overdue-banner">
-                    <span class="warning-icon">⚠</span>
-                    <span class="warning-text">
-                        <t t-esc="state.data.overdue.count"/> assets overdue for return - Flagged for follow-up!
-                    </span>
-                    <button class="view-overdue-btn" t-on-click="viewOverdue">View Details</button>
+            <!-- Screen 1: Modern Login Screen -->
+            <t t-if="!state.isLoggedIn">
+                <div class="login-wrapper">
+                    <div class="login-card">
+                        <div class="login-header">
+                            <h2>AssetFlow</h2>
+                            <p>Sign in to your account</p>
+                        </div>
+                        <div class="login-body">
+                            <div class="avatar-circle">
+                                <span>AF</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email address</label>
+                                <input type="email" placeholder="name@company.com" t-model="state.loginEmail" class="form-input"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" placeholder="••••••••" t-model="state.loginPassword" class="form-input"/>
+                            </div>
+
+                            <div class="forgot-password">
+                                <a href="#" t-on-click.prevent="() => this.notification.add('Mock password reset link sent!', {type: 'info'})">Forgot password?</a>
+                            </div>
+
+                            <div class="signup-note">
+                                <strong>New here?</strong>
+                                <span>Sign up creates an employee account. Administrator roles are assigned later.</span>
+                            </div>
+
+                            <button class="btn btn-primary btn-block" t-on-click="handleLogin">Sign In</button>
+                        </div>
+                    </div>
                 </div>
             </t>
 
-            <!-- Onboarding Quick Start Checklist -->
-            <div class="activity-section glass-panel" style="margin-bottom: 24px; padding: 20px; border-radius: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.96);">
-                <h2 style="margin-top: 0; font-size: 1.2rem; color: #1e293b; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <span>🚀</span> Quick Start Checklist
-                </h2>
-                <div class="checklist-items" style="display: flex; flex-direction: column; gap: 10px;">
-                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_assets">
-                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
-                            </t>
-                            <t t-else="">
-                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
-                            </t>
-                        </span>
-                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_assets) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Register your first asset</span>
-                    </div>
-                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_bookings">
-                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
-                            </t>
-                            <t t-else="">
-                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
-                            </t>
-                        </span>
-                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_bookings) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Book a resource</span>
-                    </div>
-                    <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_maintenances">
-                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
-                            </t>
-                            <t t-else="">
-                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
-                            </t>
-                        </span>
-                        <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_maintenances) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Raise a maintenance request</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Authenticated Workspace Layout -->
+            <t t-else="">
+                <div class="app-layout">
+                    <!-- Left Sidebar Navigation -->
+                    <div class="app-sidebar">
+                        <div class="sidebar-logo">
+                            <h1>AssetFlow</h1>
+                            <div class="role-badge" t-att-class="state.currentUserRole">
+                                <t t-esc="state.currentUserRole.replace('_', ' ').toUpperCase()"/>
+                            </div>
+                        </div>
 
-            <!-- Main Title & Quick Actions -->
-            <div class="dashboard-header-row">
-                <h1 class="dashboard-main-title">Today's Overview</h1>
-                <div class="quick-actions-bar">
-                    <button class="btn-action action-register" t-on-click="registerAsset">
-                        <span class="btn-icon">+</span> Register Asset
-                    </button>
-                    <button class="btn-action action-book" t-on-click="bookResource">
-                        <span class="btn-icon">📅</span> Book Resource
-                    </button>
-                    <button class="btn-action action-maintenance" t-on-click="raiseMaintenance">
-                        <span class="btn-icon">🔧</span> Raise Request
-                    </button>
-                </div>
-            </div>
+                        <div class="sidebar-menu">
+                            <button t-att-class="{active: state.currentScreen == 'dashboard'}" t-on-click="() => this.switchScreen('dashboard')">
+                                <span class="menu-icon">📊</span> Dashboard
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'org_setup'}" t-on-click="() => this.switchScreen('org_setup')">
+                                <span class="menu-icon">🏢</span> Organization Setup
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'assets'}" t-on-click="() => this.switchScreen('assets')">
+                                <span class="menu-icon">📦</span> Assets Directory
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'allocation_transfer'}" t-on-click="() => this.switchScreen('allocation_transfer')">
+                                <span class="menu-icon">🔄</span> Allocations &amp; Transfers
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'resource_booking'}" t-on-click="() => this.switchScreen('resource_booking')">
+                                <span class="menu-icon">📅</span> Resource Booking
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'maintenance'}" t-on-click="() => this.switchScreen('maintenance')">
+                                <span class="menu-icon">🔧</span> Maintenance
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'audit'}" t-on-click="() => this.switchScreen('audit')">
+                                <span class="menu-icon">🔍</span> Asset Audit
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'reports'}" t-on-click="() => this.switchScreen('reports')">
+                                <span class="menu-icon">📈</span> Reports &amp; Analytics
+                            </button>
+                            <button t-att-class="{active: state.currentScreen == 'notifications'}" t-on-click="() => this.switchScreen('notifications')">
+                                <span class="menu-icon">🔔</span> Activity Logs
+                            </button>
+                        </div>
 
-            <!-- KPI Cards Grid -->
-            <div class="kpi-grid">
-                <!-- Card 1 -->
-                <div class="kpi-card glass-panel available-card" t-on-click="() => this.filterAssets('available')">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">✔</span>
-                        <span class="kpi-title">Available Assets</span>
+                        <div class="sidebar-footer">
+                            <button class="btn btn-logout btn-block" t-on-click="handleLogout">
+                                🔒 Lock Workspace
+                            </button>
+                        </div>
                     </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.available_assets"/></div>
-                </div>
 
-                <!-- Card 2 -->
-                <div class="kpi-card glass-panel allocated-card" t-on-click="() => this.filterAssets('allocated')">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">🤝</span>
-                        <span class="kpi-title">Allocated Assets</span>
-                    </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.allocated_assets"/></div>
-                </div>
+                    <!-- Main Application Panel -->
+                    <div class="app-content-pane">
+                        <t t-if="state.loading">
+                            <div class="loading-overlay">
+                                <div class="spinner"></div>
+                                <p>Loading workspace data...</p>
+                            </div>
+                        </t>
 
-                <!-- Card 3 -->
-                <div class="kpi-card glass-panel bookable-card" t-on-click="() => this.filterAssets('bookable')">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">💻</span>
-                        <span class="kpi-title">Available Bookable Resources</span>
-                    </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.bookable_resources"/></div>
-                </div>
+                        <!-- Screen 2: Dashboard Overview -->
+                        <t t-if="state.currentScreen == 'dashboard'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Dashboard</h2>
+                                        <p class="text-muted">Today's system summary &amp; quick actions</p>
+                                    </div>
+                                    <div class="header-actions">
+                                        <button class="btn btn-primary btn-icon-add" t-on-click="() => this.state.showModal = 'register_asset'">
+                                            <span>+</span> Register Asset
+                                        </button>
+                                        <button class="btn btn-secondary" t-on-click="() => this.switchScreen('resource_booking')">
+                                            Book Resource
+                                        </button>
+                                        <button class="btn btn-secondary" t-on-click="() => this.state.showModal = 'maintenance_request'">
+                                            Raise Request
+                                        </button>
+                                    </div>
+                                </div>
 
-                <!-- Card 4 -->
-                <div class="kpi-card glass-panel bookings-card" t-on-click="viewBookings">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">📅</span>
-                        <span class="kpi-title">Active Bookings</span>
-                    </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.active_bookings"/></div>
-                </div>
+                                <!-- Alert Box (Overdue returns) -->
+                                <t t-if="state.dashboardData.overdue &amp;&amp; state.dashboardData.overdue.count &gt; 0">
+                                    <div class="alert-banner alert-danger" t-on-click="() => this.switchScreen('notifications')">
+                                        <span class="alert-icon">⚠️</span>
+                                        <span class="alert-text"><t t-esc="state.dashboardData.overdue.count"/> assets overdue for return - action required</span>
+                                    </div>
+                                </t>
 
-                <!-- Card 5 -->
-                <div class="kpi-card glass-panel transfers-card" t-on-click="viewTransfers">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">🔄</span>
-                        <span class="kpi-title">Pending Transfers</span>
-                    </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.pending_transfers"/></div>
-                </div>
+                                <!-- KPI Summary Cards -->
+                                <div class="kpi-grid">
+                                    <div class="kpi-card" t-on-click="() => { this.state.filterStatus = 'available'; this.switchScreen('assets'); }">
+                                        <div class="kpi-border available"></div>
+                                        <div class="kpi-label">Available</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.available_assets"/></div>
+                                    </div>
+                                    <div class="kpi-card" t-on-click="() => { this.state.filterStatus = 'allocated'; this.switchScreen('assets'); }">
+                                        <div class="kpi-border allocated"></div>
+                                        <div class="kpi-label">Allocated</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.allocated_assets"/></div>
+                                    </div>
+                                    <div class="kpi-card" t-on-click="() => { this.state.filterStatus = 'available'; this.state.filterCategory = ''; this.switchScreen('assets'); }">
+                                        <div class="kpi-border bookable"></div>
+                                        <div class="kpi-label">Bookable Resources</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.bookable_resources"/></div>
+                                    </div>
+                                    <div class="kpi-card" t-on-click="() => this.switchScreen('resource_booking')">
+                                        <div class="kpi-border active-bookings"></div>
+                                        <div class="kpi-label">Active Bookings</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.active_bookings"/></div>
+                                    </div>
+                                    <div class="kpi-card" t-on-click="() => this.switchScreen('notifications')">
+                                        <div class="kpi-border transfers"></div>
+                                        <div class="kpi-label">Pending Transfers</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.pending_transfers"/></div>
+                                    </div>
+                                    <div class="kpi-card" t-on-click="() => this.switchScreen('notifications')">
+                                        <div class="kpi-border returns"></div>
+                                        <div class="kpi-label">Upcoming Returns</div>
+                                        <div class="kpi-num"><t t-esc="state.dashboardData.kpis.upcoming_returns"/></div>
+                                    </div>
+                                </div>
 
-                <!-- Card 6 -->
-                <div class="kpi-card glass-panel returns-card" t-on-click="viewUpcomingReturns">
-                    <div class="kpi-card-header">
-                        <span class="kpi-icon">🕒</span>
-                        <span class="kpi-title">Upcoming Returns</span>
-                    </div>
-                    <div class="kpi-value"><t t-esc="state.data.kpis.upcoming_returns"/></div>
-                </div>
-            </div>
-
-            <!-- Recent Activity Section -->
-            <div class="activity-section glass-panel">
-                <div class="section-header">
-                    <h2>Recent Activity</h2>
-                </div>
-                <div class="activity-list">
-                    <t t-if="state.data.activities &amp;&amp; state.data.activities.length &gt; 0">
-                        <t t-foreach="state.data.activities" t-as="act" t-key="act.id">
-                            <div class="activity-item">
-                                <div class="activity-time"><t t-esc="act.date"/></div>
-                                <div class="activity-body">
-                                    <strong><t t-esc="act.author"/></strong>: <t t-esc="act.body"/>
-                                    <t t-if="act.record_name">
-                                        (on <t t-esc="act.record_name"/>)
-                                    </t>
+                                <!-- Recent Activity Feed -->
+                                <div class="card card-activity">
+                                    <div class="card-header">
+                                        <h3>Recent Activity</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="activity-feed">
+                                            <t t-if="state.dashboardData.activities.length &gt; 0">
+                                                <t t-foreach="state.dashboardData.activities" t-as="act" t-key="act.id">
+                                                    <div class="feed-item">
+                                                        <span class="feed-time"><t t-esc="act.date.split(' ')[1] || act.date"/></span>
+                                                        <span class="feed-body">
+                                                            <strong><t t-esc="act.author"/></strong>: <t t-esc="act.body"/>
+                                                            <t t-if="act.record_name"> <span class="record-ref-badge"><t t-esc="act.record_name"/></span></t>
+                                                        </span>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="empty-feed">No recent system logs.</div>
+                                            </t>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </t>
-                    </t>
-                    <t t-else="">
-                        <div class="no-activity">No recent activities found.</div>
-                    </t>
+
+                        <!-- Screen 3: Organization Setup -->
+                        <t t-if="state.currentScreen == 'org_setup'">
+                            <div class="screen-view">
+                                <t t-if="state.currentUserRole != 'admin'">
+                                    <div class="lockout-screen text-center">
+                                        <div class="lockout-icon">🔒</div>
+                                        <h2>Access Restricted</h2>
+                                        <p>Organization Setup requires Administrator privileges. Please contact your system manager to request permissions.</p>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="screen-header">
+                                        <div class="header-titles">
+                                            <h2>Organization Setup</h2>
+                                            <p class="text-muted">Manage corporate units, categories, and user elevations</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabs & Add Trigger -->
+                                    <div class="tab-control-row">
+                                        <div class="tab-triggers">
+                                            <button t-att-class="{active: state.activeTabOrg == 'departments'}" t-on-click="() => this.setOrgTab('departments')">Departments</button>
+                                            <button t-att-class="{active: state.activeTabOrg == 'categories'}" t-on-click="() => this.setOrgTab('categories')">Categories</button>
+                                            <button t-att-class="{active: state.activeTabOrg == 'employees'}" t-on-click="() => this.setOrgTab('employees')">Employees</button>
+                                        </div>
+                                        <t t-if="state.activeTabOrg != 'employees'">
+                                            <button class="btn btn-primary" t-on-click="() => { this.state.showModal = (this.state.activeTabOrg == 'departments') ? 'add_department' : 'add_category'; }">
+                                                <span>+</span> Add <t t-esc="state.activeTabOrg == 'departments' ? 'Department' : 'Category'"/>
+                                            </button>
+                                        </t>
+                                    </div>
+
+                                    <!-- Departments Table -->
+                                    <t t-if="state.activeTabOrg == 'departments'">
+                                        <div class="card card-table">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Department</th>
+                                                        <th>Code</th>
+                                                        <th>Head of Unit</th>
+                                                        <th>Parent Hierarchy</th>
+                                                        <th class="text-right">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="state.departments" t-as="dept" t-key="dept.id">
+                                                        <tr>
+                                                            <td><strong><t t-esc="dept.name"/></strong></td>
+                                                            <td><span class="code-badge"><t t-esc="dept.code || 'N/A'"/></span></td>
+                                                            <td><t t-esc="dept.head_id ? dept.head_id[1] : '—'"/></td>
+                                                            <td><t t-esc="dept.parent_id ? dept.parent_id[1] : 'Root'"/></td>
+                                                            <td class="text-right">
+                                                                <button t-att-class="'btn-status ' + dept.status"
+                                                                        t-on-click="() => this.toggleDeptStatus(dept.id, dept.status)">
+                                                                    <t t-esc="dept.status.toUpperCase()"/>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p class="table-caption-note">Note: Department lists configure data picklists dynamically across transfer forms.</p>
+                                    </t>
+
+                                    <!-- Categories Table -->
+                                    <t t-if="state.activeTabOrg == 'categories'">
+                                        <div class="card card-table">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Classification Title</th>
+                                                        <th>Warranty Lifespan</th>
+                                                        <th>Routine Inspection Interval</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id">
+                                                        <tr>
+                                                            <td><strong><t t-esc="cat.name"/></strong></td>
+                                                            <td><t t-esc="cat.warranty_period"/> months</td>
+                                                            <td>Every <t t-esc="cat.maintenance_interval"/> months</td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </t>
+
+                                    <!-- Employee Directory -->
+                                    <t t-if="state.activeTabOrg == 'employees'">
+                                        <div class="card card-table">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>User Name</th>
+                                                        <th>Email / Login ID</th>
+                                                        <th>Security Permission Badge</th>
+                                                        <th class="text-right">Elevations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                                        <tr>
+                                                            <td><strong><t t-esc="emp.name"/></strong></td>
+                                                            <td><t t-esc="emp.login"/></td>
+                                                            <td>
+                                                                <span t-att-class="'badge-role ' + emp.role">
+                                                                    <t t-esc="emp.role ? emp.role.toUpperCase() : 'EMPLOYEE'"/>
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <div class="action-btn-cell">
+                                                                    <t t-if="emp.role == 'employee'">
+                                                                        <button class="btn btn-secondary btn-xs" t-on-click="() => this.promoteEmployee(emp.id, 'head')">Promote to Head</button>
+                                                                        <button class="btn btn-secondary btn-xs" t-on-click="() => this.promoteEmployee(emp.id, 'manager')">Promote to Manager</button>
+                                                                    </t>
+                                                                    <t t-elif="emp.role == 'dept_head'">
+                                                                        <button class="btn btn-secondary btn-xs" t-on-click="() => this.promoteEmployee(emp.id, 'manager')">Promote to Manager</button>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <span class="muted-label text-muted">Max elevation level reached</span>
+                                                                    </t>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Screen 4: Asset directory -->
+                        <t t-if="state.currentScreen == 'assets'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Assets Directory</h2>
+                                        <p class="text-muted">Search, audit, and filter complete corporate inventory</p>
+                                    </div>
+                                </div>
+
+                                <!-- Filter toolbar -->
+                                <div class="filter-toolbar">
+                                    <div class="search-input-box">
+                                        <input type="text" placeholder="Search by tag, serial, or QR code..." t-model="state.searchQuery" class="form-input"/>
+                                    </div>
+                                    <div class="filter-dropdowns">
+                                        <select t-model="state.filterCategory" class="form-select">
+                                            <option value="">All Categories</option>
+                                            <t t-foreach="state.categories" t-as="cat" t-key="cat.id">
+                                                <option t-att-value="cat.id"><t t-esc="cat.name"/></option>
+                                            </t>
+                                        </select>
+                                        <select t-model="state.filterStatus" class="form-select">
+                                            <option value="">All Statuses</option>
+                                            <option value="available">Available</option>
+                                            <option value="allocated">Allocated</option>
+                                            <option value="maintenance">Maintenance</option>
+                                            <option value="lost">Lost</option>
+                                        </select>
+                                        <select t-model="state.filterDepartment" class="form-select">
+                                            <option value="">All Departments</option>
+                                            <t t-foreach="state.departments" t-as="dept" t-key="dept.id">
+                                                <option t-att-value="dept.id"><t t-esc="dept.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'register_asset'">
+                                        Register Asset
+                                    </button>
+                                </div>
+
+                                <!-- Asset Table Grid -->
+                                <div class="card card-table">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Asset Tag</th>
+                                                <th>Item Name</th>
+                                                <th>Category</th>
+                                                <th>Physical Location</th>
+                                                <th class="text-right">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-set="filtered" t-value="getFilteredAssets()"/>
+                                            <t t-if="filtered.length &gt; 0">
+                                                <t t-foreach="filtered" t-as="asset" t-key="asset.id">
+                                                    <tr t-on-click="() => { this.handleAssetSelect(asset.id); this.switchScreen('allocation_transfer'); }" class="clickable-row">
+                                                        <td><span class="code-badge font-bold"><t t-esc="asset.tag"/></span></td>
+                                                        <td><strong><t t-esc="asset.name"/></strong></td>
+                                                        <td><t t-esc="asset.category_id[1]"/></td>
+                                                        <td><t t-esc="asset.location || '—'"/></td>
+                                                        <td class="text-right">
+                                                            <span t-att-class="'badge-status ' + asset.state">
+                                                                <t t-esc="asset.state.toUpperCase()"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <tr>
+                                                    <td colspan="5" class="empty-table-cell">No assets match the query.</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Screen 5: Asset Allocation & Transfer -->
+                        <t t-if="state.currentScreen == 'allocation_transfer'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Asset Allocations &amp; Transfers</h2>
+                                        <p class="text-muted">Initiate asset custodian handovers and trace custody history</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-layout-cols">
+                                    <!-- Request Form -->
+                                    <div class="card card-form">
+                                        <div class="card-header">
+                                            <h3>Custodian Custody Handler</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label>Selected Asset</label>
+                                                <select class="form-select" t-att-value="state.selectedAssetId" t-on-change="(ev) => this.handleAssetSelect(ev.target.value)">
+                                                    <option value="">Select Asset from Inventory...</option>
+                                                    <t t-foreach="state.assets" t-as="a" t-key="a.id">
+                                                        <option t-att-value="a.id"><t t-esc="a.tag"/> - <t t-esc="a.name"/></option>
+                                                    </t>
+                                                </select>
+                                            </div>
+
+                                            <!-- Blocking/Warning Banner if already allocated -->
+                                            <t t-if="state.selectedAsset &amp;&amp; state.selectedAsset.state == 'allocated'">
+                                                <div class="alert-banner alert-warning">
+                                                    <span class="alert-icon">🔒</span>
+                                                    <span class="alert-text">Occupied: Custody currently held by <t t-esc="state.transferForm.from_employee_name"/>. Direct reallocation blocked. Complete transfer requests instead.</span>
+                                                </div>
+                                            </t>
+
+                                            <div class="transfer-section-box">
+                                                <h4>Submit Custodian Transfer</h4>
+                                                
+                                                <div class="form-group">
+                                                    <label>From Current Holder</label>
+                                                    <input type="text" class="form-input" readonly="1" t-att-value="state.selectedAsset &amp;&amp; state.selectedAsset.state == 'allocated' ? state.transferForm.from_employee_name : 'No custodian active'"/>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Transfer Target Custodian</label>
+                                                    <select class="form-select" t-model="state.transferForm.to_employee_id">
+                                                        <option value="">Choose Target Employee...</option>
+                                                        <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                                            <option t-att-value="emp.id"><t t-esc="emp.name"/></option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Reason for Action</label>
+                                                    <textarea class="form-textarea" rows="3" placeholder="State reason for resource movement..." t-model="state.transferForm.reason"></textarea>
+                                                </div>
+
+                                                <button class="btn btn-primary" t-on-click="submitTransferRequest">Request Custodian Move</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- History Pane -->
+                                    <div class="card card-history">
+                                        <div class="card-header">
+                                            <h3>Historical Custody Logs</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-if="state.assetHistory.length &gt; 0">
+                                                <div class="timeline-list">
+                                                    <t t-foreach="state.assetHistory" t-as="hist" t-key="hist.id">
+                                                        <div class="timeline-item">
+                                                            <div class="timeline-dot"></div>
+                                                            <div class="timeline-content">
+                                                                <span class="timeline-date"><t t-esc="hist.expected_return_date || 'Current Active'"/></span>
+                                                                <p>Custodian: <strong><t t-esc="hist.employee_id[1]"/></strong></p>
+                                                                <p class="text-muted">Unit: <t t-esc="hist.department_id ? hist.department_id[1] : 'No Dept'"/></p>
+                                                                <span t-att-class="'timeline-status-badge ' + hist.state">
+                                                                    <t t-esc="hist.state.toUpperCase()"/>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="empty-state">
+                                                    <span class="empty-icon">📂</span>
+                                                    <p>Select an asset from the list to display its chronological custodian records.</p>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Screen 6: Resource Booking -->
+                        <t t-if="state.currentScreen == 'resource_booking'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Resource Bookings</h2>
+                                        <p class="text-muted">Reserve shared assets, meeting locations, and equipment items</p>
+                                    </div>
+                                </div>
+
+                                <div class="scheduler-controls-bar">
+                                    <div class="form-group flex-grow">
+                                        <label>Select Resource</label>
+                                        <select class="form-select" t-model="state.bookingResource">
+                                            <t t-foreach="getBookableResources()" t-as="res" t-key="res.id">
+                                                <option t-att-value="res.id.toString()"><t t-esc="res.tag"/> - <t t-esc="res.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Date Selection</label>
+                                        <input type="date" class="form-input" t-model="state.bookingDate"/>
+                                    </div>
+                                    <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'book_slot'">
+                                        Create Booking
+                                    </button>
+                                </div>
+
+                                <!-- Hourly Scheduler view -->
+                                <div class="card card-scheduler">
+                                    <div class="card-header">
+                                        <h3>Daily Reservation Grid</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="scheduler-grid">
+                                            <t t-set="slots" t-value="getBookingsForResource()"/>
+                                            
+                                            <!-- Hour Rows -->
+                                            <t t-foreach="['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']" t-as="hr" t-key="hr">
+                                                <div class="hour-row">
+                                                    <div class="hour-label"><t t-esc="hr"/></div>
+                                                    <div class="hour-line-container">
+                                                        <div class="hour-line-border"></div>
+                                                        <!-- Overlay matching bookings -->
+                                                        <t t-foreach="slots" t-as="slot" t-key="slot.id">
+                                                            <t t-if="slot.start.substring(0,2) == hr.substring(0,2)">
+                                                                <div class="booked-slot-pill">
+                                                                    <span class="slot-text"><t t-esc="slot.label"/></span>
+                                                                </div>
+                                                            </t>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Screen 7: Maintenance Kanban Board -->
+                        <t t-if="state.currentScreen == 'maintenance'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Maintenance Tickets</h2>
+                                        <p class="text-muted">Track routine repairs and technician statuses</p>
+                                    </div>
+                                    <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'maintenance_request'">
+                                        Raise Request
+                                    </button>
+                                </div>
+
+                                <!-- Kanban Lane Grid -->
+                                <div class="kanban-board">
+                                    <!-- Pending Lane -->
+                                    <div class="kanban-column">
+                                        <div class="column-header">
+                                            <span>Pending Review</span>
+                                            <span class="col-count"><t t-esc="this.getTicketsByState('pending').length"/></span>
+                                        </div>
+                                        <div class="column-cards-container">
+                                            <t t-foreach="this.getTicketsByState('pending')" t-as="ticket" t-key="ticket.id">
+                                                <div class="kanban-card" t-on-click="() => this.advanceTicket(ticket.id, ticket.state)">
+                                                    <div class="card-priority-row">
+                                                        <span t-att-class="'badge-priority ' + ticket.priority"><t t-esc="ticket.priority.toUpperCase()"/></span>
+                                                    </div>
+                                                    <h4><t t-esc="ticket.asset_id[1]"/></h4>
+                                                    <p class="card-desc"><t t-esc="ticket.issue"/></p>
+                                                    <div class="card-footer-buttons">
+                                                        <button class="btn btn-danger btn-xs" t-on-click.stop="() => this.rejectTicket(ticket.id)">Reject</button>
+                                                        <button class="btn btn-success btn-xs">Approve</button>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- Approved Lane -->
+                                    <div class="kanban-column">
+                                        <div class="column-header">
+                                            <span>Approved</span>
+                                            <span class="col-count"><t t-esc="this.getTicketsByState('approved').length"/></span>
+                                        </div>
+                                        <div class="column-cards-container">
+                                            <t t-foreach="this.getTicketsByState('approved')" t-as="ticket" t-key="ticket.id">
+                                                <div class="kanban-card" t-on-click="() => this.advanceTicket(ticket.id, ticket.state)">
+                                                    <div class="card-priority-row">
+                                                        <span t-att-class="'badge-priority ' + ticket.priority"><t t-esc="ticket.priority.toUpperCase()"/></span>
+                                                    </div>
+                                                    <h4><t t-esc="ticket.asset_id[1]"/></h4>
+                                                    <p class="card-desc"><t t-esc="ticket.issue"/></p>
+                                                    <div class="card-action-hint">Click to assign technician</div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- Assigned Lane -->
+                                    <div class="kanban-column">
+                                        <div class="column-header">
+                                            <span>Assigned</span>
+                                            <span class="col-count"><t t-esc="this.getTicketsByState('assigned').length"/></span>
+                                        </div>
+                                        <div class="column-cards-container">
+                                            <t t-foreach="this.getTicketsByState('assigned')" t-as="ticket" t-key="ticket.id">
+                                                <div class="kanban-card" t-on-click="() => this.advanceTicket(ticket.id, ticket.state)">
+                                                    <div class="card-priority-row">
+                                                        <span t-att-class="'badge-priority ' + ticket.priority"><t t-esc="ticket.priority.toUpperCase()"/></span>
+                                                    </div>
+                                                    <h4><t t-esc="ticket.asset_id[1]"/></h4>
+                                                    <p class="card-desc"><t t-esc="ticket.issue"/></p>
+                                                    <div class="card-footer-info">
+                                                        <span class="tech-tag">🔧 <t t-esc="ticket.technician_id[1]"/></span>
+                                                        <button class="btn btn-primary btn-xs">Start Work</button>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- In Progress Lane -->
+                                    <div class="kanban-column">
+                                        <div class="column-header">
+                                            <span>In Progress</span>
+                                            <span class="col-count"><t t-esc="this.getTicketsByState('in_progress').length"/></span>
+                                        </div>
+                                        <div class="column-cards-container">
+                                            <t t-foreach="this.getTicketsByState('in_progress')" t-as="ticket" t-key="ticket.id">
+                                                <div class="kanban-card card-active-work" t-on-click="() => this.advanceTicket(ticket.id, ticket.state)">
+                                                    <div class="card-priority-row">
+                                                        <span t-att-class="'badge-priority ' + ticket.priority"><t t-esc="ticket.priority.toUpperCase()"/></span>
+                                                    </div>
+                                                    <h4><t t-esc="ticket.asset_id[1]"/></h4>
+                                                    <p class="card-desc"><t t-esc="ticket.issue"/></p>
+                                                    <div class="card-footer-buttons">
+                                                        <button class="btn btn-success btn-xs btn-block">Complete &amp; Resolve</button>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- Resolved Lane -->
+                                    <div class="kanban-column">
+                                        <div class="column-header">
+                                            <span>Completed</span>
+                                            <span class="col-count"><t t-esc="this.getTicketsByState('resolved').length"/></span>
+                                        </div>
+                                        <div class="column-cards-container">
+                                            <t t-foreach="this.getTicketsByState('resolved')" t-as="ticket" t-key="ticket.id">
+                                                <div class="kanban-card card-completed">
+                                                    <span class="badge-priority completed">COMPLETED</span>
+                                                    <h4><t t-esc="ticket.asset_id[1]"/></h4>
+                                                    <p class="card-desc"><t t-esc="ticket.issue"/></p>
+                                                    <div class="card-action-hint">Asset restored to available</div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Screen 8: Asset Audit -->
+                        <t t-if="state.currentScreen == 'audit'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Inventory Audits</h2>
+                                        <p class="text-muted">Validate location placements and log damaged/missing assets</p>
+                                    </div>
+                                </div>
+
+                                <div class="audit-selection-row">
+                                    <div class="form-group flex-grow">
+                                        <label>Active Verification Session</label>
+                                        <select class="form-select" t-att-value="state.selectedAuditCycleId" t-on-change="(ev) => this.handleAuditSelect(ev.target.value)">
+                                            <t t-foreach="state.auditCycles" t-as="c" t-key="c.id">
+                                                <option t-att-value="c.id"><t t-esc="c.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <t t-if="state.selectedAuditCycleId">
+                                    <t t-set="activeCycle" t-value="state.auditCycles.find(c =&gt; c.id == state.selectedAuditCycleId)"/>
+                                    
+                                    <t t-if="activeCycle">
+                                        <div class="audit-meta-summary">
+                                            <div class="meta-item">📍 Target Dept: <strong><t t-esc="activeCycle.department_id[1]"/></strong></div>
+                                            <div class="meta-item">📅 Timeline: <t t-esc="activeCycle.date_from || '—'"/> to <t t-esc="activeCycle.date_to || '—'"/></div>
+                                            <div class="meta-item">Session Status: <span t-att-class="'badge-status ' + activeCycle.state"><t t-esc="activeCycle.state.toUpperCase()"/></span></div>
+                                        </div>
+
+                                        <!-- Audit checklist table -->
+                                        <div class="card card-table" style="margin-top: 20px;">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Asset</th>
+                                                        <th>Expected Office Location</th>
+                                                        <th class="text-right">Verification Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-if="state.auditLines.length &gt; 0">
+                                                        <t t-foreach="state.auditLines" t-as="line" t-key="line.id">
+                                                            <tr>
+                                                                <td><strong><t t-esc="line.asset_id[1]"/></strong></td>
+                                                                <td><t t-esc="line.expected_location || 'Not Specified'"/></td>
+                                                                <td class="text-right">
+                                                                    <div class="audit-actions-toggle">
+                                                                        <button t-att-class="line.result == 'verified' ? 'btn-toggle-verified active' : 'btn-toggle-verified'" t-on-click="() => this.verifyAuditLine(line.id, 'verified')">Verified</button>
+                                                                        <button t-att-class="line.result == 'missing' ? 'btn-toggle-missing active' : 'btn-toggle-missing'" t-on-click="() => this.verifyAuditLine(line.id, 'missing')">Missing</button>
+                                                                        <button t-att-class="line.result == 'damaged' ? 'btn-toggle-damaged active' : 'btn-toggle-damaged'" t-on-click="() => this.verifyAuditLine(line.id, 'damaged')">Damaged</button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <tr>
+                                                            <td colspan="3" class="empty-table-cell">No assets loaded for audit scan.</td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Discrepancy Alerts summary banner -->
+                                        <div class="alert-banner alert-warning" style="margin-top: 20px;">
+                                            <div class="alert-body-content">
+                                                <strong>Discrepancy Metrics Summary:</strong>
+                                                <pre class="pre-summary"><t t-esc="activeCycle.discrepancy_summary"/></pre>
+                                            </div>
+                                        </div>
+
+                                        <t t-if="activeCycle.state == 'in_progress'">
+                                            <button class="btn btn-primary" style="margin-top: 20px;" t-on-click="closeAuditCycle">Finalize &amp; Close Session</button>
+                                        </t>
+                                    </t>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Screen 9: Reports & Analytics -->
+                        <t t-if="state.currentScreen == 'reports'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Reports &amp; Analytics</h2>
+                                        <p class="text-muted">Visualize deployment counts and inspect lifecycle statistics</p>
+                                    </div>
+                                    <button class="btn btn-secondary" t-on-click="exportReport">Export CSV Report</button>
+                                </div>
+
+                                <div class="charts-layout">
+                                    <!-- Bar Chart department allocations -->
+                                    <div class="card chart-card">
+                                        <div class="card-header">
+                                            <h3>Deployment Density by Department</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <svg class="chart-svg" viewBox="0 0 320 160">
+                                                <line x1="30" y1="20" x2="300" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+                                                <line x1="30" y1="80" x2="300" y2="80" stroke="#f1f5f9" stroke-width="1"/>
+                                                <line x1="30" y1="140" x2="300" y2="140" stroke="#cbd5e1" stroke-width="1.5"/>
+
+                                                <!-- Render bars dynamically -->
+                                                <t t-foreach="this.getDepartmentChartData()" t-as="bar" t-key="bar.label">
+                                                    <rect t-att-x="bar.x" t-att-y="bar.y" width="24" t-att-height="bar.height" fill="#4f46e5" rx="3" class="chart-bar"/>
+                                                    <text t-att-x="bar.x + 12" y="153" text-anchor="middle" font-size="7.5" fill="#64748b"><t t-esc="bar.label"/></text>
+                                                    <text t-att-x="bar.x + 12" t-att-y="bar.y - 4" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f172a"><t t-esc="bar.value"/></text>
+                                                </t>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Line Chart maintenance events -->
+                                    <div class="card chart-card">
+                                        <div class="card-header">
+                                            <h3>Routine Maintenance Frequency</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-set="chartData" t-value="this.getCategoryChartData()"/>
+                                            <svg class="chart-svg" viewBox="0 0 320 160">
+                                                <line x1="30" y1="20" x2="300" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+                                                <line x1="30" y1="80" x2="300" y2="80" stroke="#f1f5f9" stroke-width="1"/>
+                                                <line x1="30" y1="140" x2="300" y2="140" stroke="#cbd5e1" stroke-width="1.5"/>
+
+                                                <!-- Polyline line graph -->
+                                                <polyline fill="none" stroke="#10b981" stroke-width="2" t-att-points="chartData.points"/>
+
+                                                <t t-foreach="chartData.pointsList" t-as="pt" t-key="pt.label">
+                                                    <circle t-att-cx="pt.x" t-att-cy="pt.y" r="3.5" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+                                                    <text t-att-x="pt.x" y="153" text-anchor="middle" font-size="7.5" fill="#64748b"><t t-esc="pt.label"/></text>
+                                                    <text t-att-x="pt.x" t-att-y="pt.y - 6" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f172a"><t t-esc="pt.value"/></text>
+                                                </t>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="insights-summary-grid">
+                                    <div class="card insight-card">
+                                        <div class="card-header"><h4>Top Booking Assets</h4></div>
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Conference Room B2 – 24 bookings this month</li>
+                                                <li>Cargo Van AF-0112 – 27 allocations this month</li>
+                                                <li>Smart Projector AF-0062 – 78 operating hours</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="card insight-card">
+                                        <div class="card-header"><h4>Underutilized Stocks</h4></div>
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Recording Camera AF-0301 – inactive 60+ days</li>
+                                                <li>Ergonomic Chair AF-0410 – inactive 45 days</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="card insight-card">
+                                        <div class="card-header"><h4>Retirement Alerts</h4></div>
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Heavy Forklift AF-0057 – scheduled overhaul (5 days)</li>
+                                                <li>Intel Laptop AF-0020 – 4 years old : nearing deprecation</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Screen 10: Activity logs & Notifications -->
+                        <t t-if="state.currentScreen == 'notifications'">
+                            <div class="screen-view">
+                                <div class="screen-header">
+                                    <div class="header-titles">
+                                        <h2>Activity Logs</h2>
+                                        <p class="text-muted">Chronological timeline of system executions and transfers</p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-control-row">
+                                    <div class="tab-triggers">
+                                        <button t-att-class="{active: state.logFilter == 'all'}" t-on-click="() => state.logFilter = 'all'">All Logs</button>
+                                        <button t-att-class="{active: state.logFilter == 'alerts'}" t-on-click="() => state.logFilter = 'alerts'">Alerts</button>
+                                        <button t-att-class="{active: state.logFilter == 'approvals'}" t-on-click="() => state.logFilter = 'approvals'">Approvals</button>
+                                        <button t-att-class="{active: state.logFilter == 'bookings'}" t-on-click="() => state.logFilter = 'bookings'">Bookings</button>
+                                    </div>
+                                </div>
+
+                                <div class="card card-notifications-list">
+                                    <div class="card-body" style="padding: 0;">
+                                        <t t-set="logs" t-value="getFilteredActivities()"/>
+                                        <t t-if="logs.length &gt; 0">
+                                            <t t-foreach="logs" t-as="l" t-key="l.id">
+                                                <div class="full-feed-item">
+                                                    <div class="feed-status-marker"></div>
+                                                    <div class="feed-content-wrapper">
+                                                        <div class="feed-meta-row">
+                                                            <span class="feed-date-tag"><t t-esc="l.date"/></span>
+                                                        </div>
+                                                        <p class="feed-text-desc"><strong><t t-esc="l.author"/></strong>: <t t-esc="l.body"/></p>
+                                                        <t t-if="l.record_name"><span class="badge-record-ref"><t t-esc="l.record_name"/></span></t>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="empty-feed-placeholder">No matching notifications recorded.</div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
                 </div>
-            </div>
+            </t>
+
+            <!-- ==================== DIALOG MODAL POPUPS ==================== -->
+            <!-- Modal 1: Register Asset Modal -->
+            <t t-if="state.showModal == 'register_asset'">
+                <div class="modal-backdrop">
+                    <div class="modal-content-card">
+                        <div class="modal-header">
+                            <h3>Register Inventory Asset</h3>
+                            <button class="modal-close-x" t-on-click="() => state.showModal = null">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Asset Label Name</label>
+                                <input type="text" class="form-input" placeholder="e.g. MacBook Pro M3" t-model="state.newAssetForm.name"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Classification Category</label>
+                                <select class="form-select" t-model="state.newAssetForm.category_id">
+                                    <option value="">Select Category</option>
+                                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id">
+                                        <option t-att-value="cat.id"><t t-esc="cat.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Serial Number</label>
+                                <input type="text" class="form-input" placeholder="Manufacturer ID" t-model="state.newAssetForm.serial_no"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Acquisition Date</label>
+                                <input type="date" class="form-input" t-model="state.newAssetForm.acquisition_date"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Acquisition Cost ($)</label>
+                                <input type="number" class="form-input" t-model="state.newAssetForm.acquisition_cost"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Asset Room Location</label>
+                                <input type="text" class="form-input" placeholder="e.g. HQ Floor 3" t-model="state.newAssetForm.location"/>
+                            </div>
+                            <div class="form-group form-checkbox-row">
+                                <input type="checkbox" id="modal_is_bookable_check" t-model="state.newAssetForm.is_bookable"/>
+                                <label for="modal_is_bookable_check">Mark as Shareable/Bookable Resource</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Asset Department Owner</label>
+                                <select class="form-select" t-model="state.newAssetForm.department_id">
+                                    <option value="">No Department (Float)</option>
+                                    <t t-foreach="state.departments" t-as="dept" t-key="dept.id">
+                                        <option t-att-value="dept.id"><t t-esc="dept.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="() => state.showModal = null">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitRegisterAsset">Register Asset</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Modal 2: Add Department Modal -->
+            <t t-if="state.showModal == 'add_department'">
+                <div class="modal-backdrop">
+                    <div class="modal-content-card">
+                        <div class="modal-header">
+                            <h3>Create Corporate Department</h3>
+                            <button class="modal-close-x" t-on-click="() => state.showModal = null">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Department Name</label>
+                                <input type="text" class="form-input" placeholder="e.g. Engineering Support" t-model="state.newDeptForm.name"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Unique Code</label>
+                                <input type="text" class="form-input" placeholder="e.g. ENG" t-model="state.newDeptForm.code"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Department Head</label>
+                                <select class="form-select" t-model="state.newDeptForm.head_id">
+                                    <option value="">Select Employee...</option>
+                                    <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                        <option t-att-value="emp.id"><t t-esc="emp.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Parent Hierarchy Node</label>
+                                <select class="form-select" t-model="state.newDeptForm.parent_id">
+                                    <option value="">None (Root Node)</option>
+                                    <t t-foreach="state.departments" t-as="d" t-key="d.id">
+                                        <option t-att-value="d.id"><t t-esc="d.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="() => state.showModal = null">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitNewDept">Create Node</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Modal 3: Add Category Modal -->
+            <t t-if="state.showModal == 'add_category'">
+                <div class="modal-backdrop">
+                    <div class="modal-content-card">
+                        <div class="modal-header">
+                            <h3>Create Asset Category</h3>
+                            <button class="modal-close-x" t-on-click="() => state.showModal = null">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Category Name</label>
+                                <input type="text" class="form-input" placeholder="e.g. Network Switches" t-model="state.newCatForm.name"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Warranty Length (Months)</label>
+                                <input type="number" class="form-input" t-model="state.newCatForm.warranty_period"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Maintenance Inspection Frequency (Months)</label>
+                                <input type="number" class="form-input" t-model="state.newCatForm.maintenance_interval"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="() => state.showModal = null">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitNewCategory">Create Category</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Modal 4: Book Slot Modal -->
+            <t t-if="state.showModal == 'book_slot'">
+                <div class="modal-backdrop">
+                    <div class="modal-content-card">
+                        <div class="modal-header">
+                            <h3>Reserve Resource Slot</h3>
+                            <button class="modal-close-x" t-on-click="() => state.showModal = null">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Booking Employee</label>
+                                <select class="form-select" t-model="state.bookingForm.employee_id">
+                                    <option value="">Select Employee...</option>
+                                    <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                        <option t-att-value="emp.id"><t t-esc="emp.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Start Hour</label>
+                                <select class="form-select" t-model="state.bookingForm.start_time">
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>End Hour</label>
+                                <select class="form-select" t-model="state.bookingForm.end_time">
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="() => state.showModal = null">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitBooking">Confirm Reservation</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Modal 5: Maintenance Request Modal -->
+            <t t-if="state.showModal == 'maintenance_request'">
+                <div class="modal-backdrop">
+                    <div class="modal-content-card">
+                        <div class="modal-header">
+                            <h3>Submit Repair Ticket</h3>
+                            <button class="modal-close-x" t-on-click="() => state.showModal = null">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Target Asset</label>
+                                <select class="form-select" id="maint_asset_select">
+                                    <option value="">Select Asset...</option>
+                                    <t t-foreach="state.assets" t-as="a" t-key="a.id">
+                                        <option t-att-value="a.id"><t t-esc="a.tag"/> – <t t-esc="a.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Problem Description</label>
+                                <textarea class="form-textarea" id="maint_issue_textarea" rows="4" placeholder="Detail hardware fault, wear, or inspection reasons..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority Level</label>
+                                <select class="form-select" id="maint_prio_select">
+                                    <option value="low">Low Priority</option>
+                                    <option value="medium" selected="1">Medium Priority</option>
+                                    <option value="high">High Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="() => state.showModal = null">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitMaintenanceRequest">File Ticket</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
         </div>
     </t>
 </templates>
