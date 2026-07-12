@@ -50,14 +50,14 @@
                             <div class="role-badge" t-att-class="state.currentUserRole">
                                 <t t-esc="state.currentUserRole.replace('_', ' ').toUpperCase()"/>
                             </div>
-                            <div class="role-switcher-box" style="margin-top: 10px; text-align: left;">
-                                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 600;">Simulate Role:</label>
-                                <select class="form-select" t-att-value="state.currentUserRole" t-on-change="(ev) => this.switchSimulatedRole(ev.target.value)" style="padding: 2px 6px; font-size: 0.75rem; height: 28px; line-height: 1; min-height: 28px;">
-                                    <option value="admin">Administrator</option>
-                                    <option value="manager">Asset Manager</option>
-                                    <option value="dept_head">Department Head</option>
-                                    <option value="employee">Employee</option>
-                                </select>
+                            <div class="role-display-box" style="margin-top: 10px; text-align: left; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                                <span class="muted-label" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 4px; font-weight: 600;">Current Role:</span>
+                                <div class="role-badge-display" t-att-class="state.currentUserRole" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; background: #e2e8f0; font-weight: 700; text-transform: uppercase; color: #334155; display: inline-block;">
+                                    <t t-esc="state.currentUserRole.replace('_', ' ')"/>
+                                </div>
+                                <button class="btn btn-secondary btn-xs" t-on-click="handleLogout" style="margin-top: 8px; display: block; width: 100%; font-size: 0.7rem; padding: 4px; border: 1px dashed #cbd5e1; color: #475569; background: #fff; font-weight: 500;">
+                                    Switch Account/Role
+                                </button>
                             </div>
                         </div>
 
@@ -65,9 +65,11 @@
                             <button t-att-class="{active: state.currentScreen == 'dashboard'}" t-on-click="() => this.switchScreen('dashboard')">
                                 <span class="menu-icon">📊</span> Dashboard
                             </button>
-                            <button t-att-class="{active: state.currentScreen == 'org_setup'}" t-on-click="() => this.switchScreen('org_setup')">
-                                <span class="menu-icon">🏢</span> Organization Setup
-                            </button>
+                            <t t-if="state.currentUserRole == 'admin'">
+                                <button t-att-class="{active: state.currentScreen == 'org_setup'}" t-on-click="() => this.switchScreen('org_setup')">
+                                    <span class="menu-icon">🏢</span> Organization Setup
+                                </button>
+                            </t>
                             <button t-att-class="{active: state.currentScreen == 'assets'}" t-on-click="() => this.switchScreen('assets')">
                                 <span class="menu-icon">📦</span> Assets Directory
                             </button>
@@ -80,12 +82,14 @@
                             <button t-att-class="{active: state.currentScreen == 'maintenance'}" t-on-click="() => this.switchScreen('maintenance')">
                                 <span class="menu-icon">🔧</span> Maintenance
                             </button>
-                            <button t-att-class="{active: state.currentScreen == 'audit'}" t-on-click="() => this.switchScreen('audit')">
-                                <span class="menu-icon">🔍</span> Asset Audit
-                            </button>
-                            <button t-att-class="{active: state.currentScreen == 'reports'}" t-on-click="() => this.switchScreen('reports')">
-                                <span class="menu-icon">📈</span> Reports &amp; Analytics
-                            </button>
+                            <t t-if="state.currentUserRole == 'admin' || state.currentUserRole == 'manager'">
+                                <button t-att-class="{active: state.currentScreen == 'audit'}" t-on-click="() => this.switchScreen('audit')">
+                                    <span class="menu-icon">🔍</span> Asset Audit
+                                </button>
+                                <button t-att-class="{active: state.currentScreen == 'reports'}" t-on-click="() => this.switchScreen('reports')">
+                                    <span class="menu-icon">📈</span> Reports &amp; Analytics
+                                </button>
+                            </t>
                             <button t-att-class="{active: state.currentScreen == 'notifications'}" t-on-click="() => this.switchScreen('notifications')">
                                 <span class="menu-icon">🔔</span> Activity Logs
                             </button>
@@ -116,9 +120,11 @@
                                         <p class="text-muted">Today's system summary &amp; quick actions</p>
                                     </div>
                                     <div class="header-actions">
-                                        <button class="btn btn-primary btn-icon-add" t-on-click="() => this.state.showModal = 'register_asset'">
-                                            <span>+</span> Register Asset
-                                        </button>
+                                        <t t-if="state.currentUserRole == 'admin' || state.currentUserRole == 'manager'">
+                                            <button class="btn btn-primary btn-icon-add" t-on-click="() => this.state.showModal = 'register_asset'">
+                                                <span>+</span> Register Asset
+                                            </button>
+                                        </t>
                                         <button class="btn btn-secondary" t-on-click="() => this.switchScreen('resource_booking')">
                                             Book Resource
                                         </button>
@@ -378,9 +384,11 @@
                                             </t>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'register_asset'">
-                                        Register Asset
-                                    </button>
+                                    <t t-if="state.currentUserRole == 'admin' || state.currentUserRole == 'manager'">
+                                        <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'register_asset'">
+                                            Register Asset
+                                        </button>
+                                    </t>
                                 </div>
 
                                 <!-- Asset Table Grid -->
@@ -613,10 +621,12 @@
                                                     </div>
                                                     <h4><t t-esc="ticket.asset_id[1]"/></h4>
                                                     <p class="card-desc"><t t-esc="ticket.issue"/></p>
-                                                    <div class="card-footer-buttons">
-                                                        <button class="btn btn-danger btn-xs" t-on-click.stop="() => this.rejectTicket(ticket.id)">Reject</button>
-                                                        <button class="btn btn-success btn-xs">Approve</button>
-                                                    </div>
+                                                    <t t-if="state.currentUserRole == 'admin' || state.currentUserRole == 'manager'">
+                                                        <div class="card-footer-buttons">
+                                                            <button class="btn btn-danger btn-xs" t-on-click.stop="() => this.rejectTicket(ticket.id)">Reject</button>
+                                                            <button class="btn btn-success btn-xs">Approve</button>
+                                                        </div>
+                                                    </t>
                                                 </div>
                                             </t>
                                         </div>
@@ -636,7 +646,9 @@
                                                     </div>
                                                     <h4><t t-esc="ticket.asset_id[1]"/></h4>
                                                     <p class="card-desc"><t t-esc="ticket.issue"/></p>
-                                                    <div class="card-action-hint">Click to assign technician</div>
+                                                    <t t-if="state.currentUserRole == 'admin' || state.currentUserRole == 'manager'">
+                                                        <div class="card-action-hint">Click to assign technician</div>
+                                                    </t>
                                                 </div>
                                             </t>
                                         </div>

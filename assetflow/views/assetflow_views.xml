@@ -193,6 +193,14 @@
         <field name="model">assetflow.maintenance</field>
         <field name="arch" type="xml">
             <form string="Maintenance Request">
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'pending'" groups="assetflow.group_assetflow_manager,assetflow.group_assetflow_admin"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'pending'" groups="assetflow.group_assetflow_manager,assetflow.group_assetflow_admin"/>
+                    <button name="action_assign_technician" string="Assign" type="object" class="btn-primary" invisible="state != 'approved'" groups="assetflow.group_assetflow_manager,assetflow.group_assetflow_admin"/>
+                    <button name="action_start" string="Start Work" type="object" class="btn-info" invisible="state != 'assigned'"/>
+                    <button name="action_resolve" string="Resolve" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,approved,assigned,in_progress,resolved,rejected"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -292,8 +300,8 @@
         <field name="arch" type="xml">
             <form string="Asset Transfer Request">
                 <header>
-                    <button name="action_approve" string="Approve &amp; Reallocate" type="object" class="btn-success" invisible="state != 'requested'"/>
-                    <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'requested'"/>
+                    <button name="action_approve" string="Approve &amp; Reallocate" type="object" class="btn-success" invisible="state != 'requested'" groups="assetflow.group_assetflow_manager,assetflow.group_assetflow_dept_head,assetflow.group_assetflow_admin"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'requested'" groups="assetflow.group_assetflow_manager,assetflow.group_assetflow_dept_head,assetflow.group_assetflow_admin"/>
                     <field name="state" widget="statusbar" statusbar_visible="requested,approved,rejected,reallocated"/>
                 </header>
                 <sheet>
@@ -511,19 +519,4 @@
         <field name="target">current</field>
     </record>
 
-    <!-- ==================== SUB-MENUS ==================== -->
-    <menuitem id="menu_assetflow_assets" name="Assets" parent="menu_assetflow_root" action="action_assetflow_asset" sequence="15"/>
-    <menuitem id="menu_assetflow_allocations" name="Allocations" parent="menu_assetflow_root" action="action_assetflow_allocation" sequence="16"/>
-    <menuitem id="menu_assetflow_bookings" name="Bookings" parent="menu_assetflow_root" action="action_assetflow_booking" sequence="17"/>
-    <menuitem id="menu_assetflow_maintenance" name="Maintenance" parent="menu_assetflow_root" action="action_assetflow_maintenance" sequence="18"/>
-    <menuitem id="menu_assetflow_audit_cycle" name="Audit Cycles" parent="menu_assetflow_root" action="action_assetflow_audit_cycle" sequence="19"/>
-    
-    <!-- Parent Menu: Reports -->
-    <menuitem id="menu_assetflow_reports" name="Reports &amp; Analytics" parent="menu_assetflow_root" sequence="40"/>
-    
-    <!-- Sub-menus under Reports -->
-    <menuitem id="menu_report_asset_utilization" name="Asset Utilization" parent="menu_assetflow_reports" action="action_report_asset_utilization" sequence="1"/>
-    <menuitem id="menu_report_maintenance_frequency" name="Maintenance Frequency" parent="menu_assetflow_reports" action="action_report_maintenance_frequency" sequence="2"/>
-    <menuitem id="menu_report_idle_assets" name="Idle Assets" parent="menu_assetflow_reports" action="action_report_idle_assets" sequence="3"/>
-    <menuitem id="menu_report_most_used_assets" name="Most-Used Assets" parent="menu_assetflow_reports" action="action_report_most_used_assets" sequence="4"/>
 </odoo>

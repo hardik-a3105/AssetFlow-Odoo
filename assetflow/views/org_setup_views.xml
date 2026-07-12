@@ -8,8 +8,7 @@
         <field name="code">action = model.action_open_setup()</field>
     </record>
 
-    <!-- Menu Item for Org Setup -->
-    <menuitem id="menu_assetflow_org_setup" name="Organization Setup" parent="menu_assetflow_root" action="action_assetflow_org_setup_server" sequence="20" groups="group_assetflow_admin"/>
+
 
     <!-- Form View -->
     <record id="view_org_setup_form" model="ir.ui.view">

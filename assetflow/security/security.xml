@@ -47,6 +47,28 @@
 
     <!-- RECORD RULES -->
 
+    <!-- Asset Rules -->
+    <record id="rule_assetflow_asset_employee" model="ir.rule">
+        <field name="name">Employee Asset Rule</field>
+        <field name="model_id" ref="model_assetflow_asset"/>
+        <field name="domain_force">['|', ('is_bookable', '=', True), '&amp;', ('allocation_ids.employee_id', '=', user.id), ('allocation_ids.state', '=', 'active')]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
+
+    <record id="rule_assetflow_asset_dept_head" model="ir.rule">
+        <field name="name">Dept Head Asset Rule</field>
+        <field name="model_id" ref="model_assetflow_asset"/>
+        <field name="domain_force">['|', '|', ('is_bookable', '=', True), ('department_id', '=', user.department_id.id), '&amp;', ('allocation_ids.employee_id', '=', user.id), ('allocation_ids.state', '=', 'active')]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_dept_head'))]"/>
+    </record>
+
+    <record id="rule_assetflow_asset_manager" model="ir.rule">
+        <field name="name">Manager Asset Rule</field>
+        <field name="model_id" ref="model_assetflow_asset"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_admin'))]"/>
+    </record>
+
     <!-- Allocation Rules -->
     <record id="rule_assetflow_allocation_employee" model="ir.rule">
         <field name="name">Employee Allocation Rule</field>
@@ -55,11 +77,18 @@
         <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
     </record>
 
+    <record id="rule_assetflow_allocation_dept_head" model="ir.rule">
+        <field name="name">Dept Head Allocation Rule</field>
+        <field name="model_id" ref="model_assetflow_allocation"/>
+        <field name="domain_force">['|', '|', ('department_id', '=', user.department_id.id), ('employee_id.department_id', '=', user.department_id.id), ('employee_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_dept_head'))]"/>
+    </record>
+
     <record id="rule_assetflow_allocation_manager" model="ir.rule">
         <field name="name">Manager Allocation Rule</field>
         <field name="model_id" ref="model_assetflow_allocation"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_admin'))]"/>
     </record>
 
     <!-- Booking Rules -->
@@ -70,25 +99,61 @@
         <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
     </record>
 
+    <record id="rule_assetflow_booking_dept_head" model="ir.rule">
+        <field name="name">Dept Head Booking Rule</field>
+        <field name="model_id" ref="model_assetflow_booking"/>
+        <field name="domain_force">['|', ('employee_id.department_id', '=', user.department_id.id), ('employee_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_dept_head'))]"/>
+    </record>
+
     <record id="rule_assetflow_booking_manager" model="ir.rule">
         <field name="name">Manager Booking Rule</field>
         <field name="model_id" ref="model_assetflow_booking"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_admin'))]"/>
     </record>
 
     <!-- Maintenance Rules -->
     <record id="rule_assetflow_maintenance_employee" model="ir.rule">
         <field name="name">Employee Maintenance Rule</field>
         <field name="model_id" ref="model_assetflow_maintenance"/>
-        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="domain_force">['|', ('create_uid', '=', user.id), ('technician_id', '=', user.id)]</field>
         <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
+
+    <record id="rule_assetflow_maintenance_dept_head" model="ir.rule">
+        <field name="name">Dept Head Maintenance Rule</field>
+        <field name="model_id" ref="model_assetflow_maintenance"/>
+        <field name="domain_force">['|', '|', ('asset_id.department_id', '=', user.department_id.id), ('create_uid', '=', user.id), ('technician_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_dept_head'))]"/>
     </record>
 
     <record id="rule_assetflow_maintenance_manager" model="ir.rule">
         <field name="name">Manager Maintenance Rule</field>
         <field name="model_id" ref="model_assetflow_maintenance"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_admin'))]"/>
+    </record>
+
+    <!-- Transfer Request Rules -->
+    <record id="rule_assetflow_transfer_employee" model="ir.rule">
+        <field name="name">Employee Transfer Rule</field>
+        <field name="model_id" ref="model_assetflow_transfer_request"/>
+        <field name="domain_force">['|', '|', ('from_employee_id', '=', user.id), ('to_employee_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
+
+    <record id="rule_assetflow_transfer_dept_head" model="ir.rule">
+        <field name="name">Dept Head Transfer Rule</field>
+        <field name="model_id" ref="model_assetflow_transfer_request"/>
+        <field name="domain_force">['|', '|', ('from_employee_id.department_id', '=', user.department_id.id), ('to_employee_id.department_id', '=', user.department_id.id), ('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_dept_head'))]"/>
+    </record>
+
+    <record id="rule_assetflow_transfer_manager" model="ir.rule">
+        <field name="name">Manager Transfer Rule</field>
+        <field name="model_id" ref="model_assetflow_transfer_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_admin'))]"/>
     </record>
 </odoo>

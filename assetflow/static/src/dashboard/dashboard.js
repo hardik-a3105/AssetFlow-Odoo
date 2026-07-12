@@ -162,7 +162,7 @@ export class AssetFlowDashboard extends Component {
             this.state.maintenanceTickets = await this.orm.searchRead(
                 "assetflow.maintenance",
                 [],
-                ["asset_id", "issue", "priority", "technician_id", "state"]
+                ["asset_id", "issue", "priority", "technician_id", "state", "create_uid"]
             );
 
             // 8. Load Allocations
@@ -245,16 +245,22 @@ export class AssetFlowDashboard extends Component {
             this.notification.add("Please fill in email and password.", { type: "danger" });
             return;
         }
-        // Basic role check simulation on mock login
         const matchedUser = this.state.employees.find(e => e.login === this.state.loginEmail);
-        if (matchedUser) {
-            this.state.currentUserRole = matchedUser.role || "employee";
-        } else {
-            this.state.currentUserRole = "employee";
+        if (!matchedUser) {
+            this.notification.add("Invalid login credentials.", { type: "danger" });
+            return;
         }
+        // Validate password (matches username prefix or 'admin')
+        const expectedPassword = matchedUser.login.split('@')[0];
+        if (this.state.loginPassword !== expectedPassword && this.state.loginPassword !== 'admin') {
+            this.notification.add(`Invalid password. (Hint: use password '${expectedPassword}')`, { type: "danger" });
+            return;
+        }
+        this.state.currentUserRole = matchedUser.role || "employee";
+        this.state.currentUserId = matchedUser.id;
         this.state.isLoggedIn = true;
         this.state.currentScreen = "dashboard";
-        this.notification.add("Logged in successfully!", { type: "success" });
+        this.notification.add(`Logged in as ${matchedUser.name}!`, { type: "success" });
     }
 
     handleLogout() {
@@ -262,6 +268,7 @@ export class AssetFlowDashboard extends Component {
         this.state.currentScreen = "login";
         this.state.loginEmail = "";
         this.state.loginPassword = "";
+        this.state.currentUserId = null;
     }
 
     // Screen 3: Org Setup actions
@@ -342,7 +349,34 @@ export class AssetFlowDashboard extends Component {
 
     // Screen 4: Assets directory
     getFilteredAssets() {
+        const currentUserId = this.state.currentUserId;
+        const currentUserRole = this.state.currentUserRole;
+        const currentUser = this.state.employees.find(e => e.id === currentUserId);
+        const userDeptId = currentUser && currentUser.department_id ? currentUser.department_id[0] : null;
+
         return this.state.assets.filter(asset => {
+            // Role-based visibility logic
+            if (currentUserRole !== 'admin' && currentUserRole !== 'manager') {
+                const isBookable = asset.is_bookable;
+                
+                let isAllocatedToMe = false;
+                const activeAlloc = this.state.allocations.find(alloc => 
+                    alloc.asset_id[0] === asset.id && 
+                    alloc.state === 'active' && 
+                    alloc.employee_id[0] === currentUserId
+                );
+                if (activeAlloc) isAllocatedToMe = true;
+
+                let isDeptAsset = false;
+                if (currentUserRole === 'dept_head' && userDeptId && asset.department_id && asset.department_id[0] === userDeptId) {
+                    isDeptAsset = true;
+                }
+
+                if (!isBookable && !isAllocatedToMe && !isDeptAsset) {
+                    return false;
+                }
+            }
+
             const matchesSearch = !this.state.searchQuery || 
                 asset.name.toLowerCase().includes(this.state.searchQuery.toLowerCase()) ||
                 (asset.tag && asset.tag.toLowerCase().includes(this.state.searchQuery.toLowerCase())) ||
@@ -520,19 +554,45 @@ export class AssetFlowDashboard extends Component {
 
     // Screen 7: Maintenance Kanban Workflow
     getTicketsByState(stateName) {
-        return this.state.maintenanceTickets.filter(t => t.state === stateName);
+        const currentUserId = this.state.currentUserId;
+        const currentUserRole = this.state.currentUserRole;
+        const currentUser = this.state.employees.find(e => e.id === currentUserId);
+        const userDeptId = currentUser && currentUser.department_id ? currentUser.department_id[0] : null;
+
+        return this.state.maintenanceTickets.filter(t => {
+            if (t.state !== stateName) return false;
+            
+            if (currentUserRole !== 'admin' && currentUserRole !== 'manager') {
+                const isCreator = t.create_uid && t.create_uid[0] === currentUserId;
+                const isTech = t.technician_id && t.technician_id[0] === currentUserId;
+                
+                let isDeptMaint = false;
+                if (currentUserRole === 'dept_head' && userDeptId) {
+                    const asset = this.state.assets.find(a => a.id === t.asset_id[0]);
+                    if (asset && asset.department_id && asset.department_id[0] === userDeptId) {
+                        isDeptMaint = true;
+                    }
+                }
+
+                if (!isCreator && !isTech && !isDeptMaint) {
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     async advanceTicket(ticketId, currentState) {
-        if (this.state.currentUserRole === 'employee') {
-            this.notification.add("Department Head, Manager, or Admin status required to advance tickets.", { type: "danger" });
-            return;
+        if (currentState === 'pending' || currentState === 'approved') {
+            if (this.state.currentUserRole !== 'admin' && this.state.currentUserRole !== 'manager') {
+                this.notification.add("Manager or Admin status required to approve or assign maintenance requests.", { type: "danger" });
+                return;
+            }
         }
         if (currentState === 'pending') {
             await this.orm.call("assetflow.maintenance", "action_approve", [ticketId]);
             this.notification.add("Maintenance request approved — Asset marked under maintenance.", { type: "success" });
         } else if (currentState === 'approved') {
-            // Assign first admin/tech user as a default
             const adminUser = this.state.employees.find(e => e.role === 'admin' || e.role === 'manager') || this.state.employees[0];
             await this.orm.write("assetflow.maintenance", [ticketId], { 
                 state: 'assigned',

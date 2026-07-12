@@ -7,8 +7,5 @@
     </record>
 
     <!-- Main Menus -->
-    <menuitem id="menu_assetflow_root" name="AssetFlow" web_icon="assetflow,static/description/icon.png" sequence="1"/>
-    
-    <!-- Dashboard Menu -->
-    <menuitem id="menu_assetflow_dashboard" name="Dashboard" parent="menu_assetflow_root" action="action_assetflow_dashboard" sequence="10"/>
+    <menuitem id="menu_assetflow_root" name="AssetFlow" web_icon="assetflow,static/description/icon.png" action="action_assetflow_dashboard" sequence="1"/>
 </odoo>

@@ -17,6 +17,7 @@
         'views/dashboard_views.xml',
         'views/org_setup_views.xml',
         'views/assetflow_views.xml',
+        'views/assetflow_report_views.xml',
         'data/ir_cron_data.xml',
         'data/mail_template_data.xml',
         'data/demo.xml',
