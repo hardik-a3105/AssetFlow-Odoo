@@ -1,84 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <!-- Security Category -->
-        <record id="module_category_assetflow" model="ir.module.category">
-            <name>AssetFlow</name>
-            <description>Category for AssetFlow management</description>
-            <sequence>20</sequence>
-        </record>
+    <!-- Security Category -->
+    <record id="module_category_assetflow" model="ir.module.category">
+        <field name="name">AssetFlow</field>
+        <field name="description">Category for AssetFlow management</field>
+        <field name="sequence">20</field>
+    </record>
 
-        <!-- Employee Group -->
-        <record id="group_assetflow_employee" model="res.groups">
-            <name>Employee</name>
-            <category_id ref="module_category_assetflow"/>
-            <implied_ids eval="[(4, ref('base.group_user'))]"/>
-        </record>
+    <!-- Employee Group -->
+    <record id="group_assetflow_employee" model="res.groups">
+        <field name="name">Employee</field>
+        <field name="category_id" ref="module_category_assetflow"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
 
-        <!-- Department Head Group -->
-        <record id="group_assetflow_dept_head" model="res.groups">
-            <name>Department Head</name>
-            <category_id ref="module_category_assetflow"/>
-            <implied_ids eval="[(4, ref('group_assetflow_employee'))]"/>
-        </record>
+    <!-- Department Head Group -->
+    <record id="group_assetflow_dept_head" model="res.groups">
+        <field name="name">Department Head</field>
+        <field name="category_id" ref="module_category_assetflow"/>
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
 
-        <!-- Asset Manager Group -->
-        <record id="group_assetflow_manager" model="res.groups">
-            <name>Asset Manager</name>
-            <category_id ref="module_category_assetflow"/>
-            <implied_ids eval="[(4, ref('group_assetflow_employee'))]"/>
-        </record>
+    <!-- Asset Manager Group -->
+    <record id="group_assetflow_manager" model="res.groups">
+        <field name="name">Asset Manager</field>
+        <field name="category_id" ref="module_category_assetflow"/>
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
 
-        <!-- Admin Group -->
-        <record id="group_assetflow_admin" model="res.groups">
-            <name>Admin</name>
-            <category_id ref="module_category_assetflow"/>
-            <implied_ids eval="[(4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_manager')), (4, ref('base.group_system'))]"/>
-        </record>
+    <!-- Admin Group -->
+    <record id="group_assetflow_admin" model="res.groups">
+        <field name="name">Admin</field>
+        <field name="category_id" ref="module_category_assetflow"/>
+        <field name="implied_ids" eval="[(4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_manager')), (4, ref('base.group_system'))]"/>
+    </record>
 
-        <!-- RECORD RULES -->
+    <!-- RECORD RULES -->
 
-        <!-- Allocation Rules -->
-        <record id="rule_assetflow_allocation_employee" model="ir.rule">
-            <name>Employee Allocation Rule</name>
-            <model_id ref="model_assetflow_allocation"/>
-            <domain_force>[('employee_id', '=', user.id)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_employee'))]"/>
-        </record>
+    <!-- Allocation Rules -->
+    <record id="rule_assetflow_allocation_employee" model="ir.rule">
+        <field name="name">Employee Allocation Rule</field>
+        <field name="model_id" ref="model_assetflow_allocation"/>
+        <field name="domain_force">[('employee_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
 
-        <record id="rule_assetflow_allocation_manager" model="ir.rule">
-            <name>Manager Allocation Rule</name>
-            <model_id ref="model_assetflow_allocation"/>
-            <domain_force>[(1, '=', 1)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
-        </record>
+    <record id="rule_assetflow_allocation_manager" model="ir.rule">
+        <field name="name">Manager Allocation Rule</field>
+        <field name="model_id" ref="model_assetflow_allocation"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+    </record>
 
-        <!-- Booking Rules -->
-        <record id="rule_assetflow_booking_employee" model="ir.rule">
-            <name>Employee Booking Rule</name>
-            <model_id ref="model_assetflow_booking"/>
-            <domain_force>[('employee_id', '=', user.id)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_employee'))]"/>
-        </record>
+    <!-- Booking Rules -->
+    <record id="rule_assetflow_booking_employee" model="ir.rule">
+        <field name="name">Employee Booking Rule</field>
+        <field name="model_id" ref="model_assetflow_booking"/>
+        <field name="domain_force">[('employee_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
 
-        <record id="rule_assetflow_booking_manager" model="ir.rule">
-            <name>Manager Booking Rule</name>
-            <model_id ref="model_assetflow_booking"/>
-            <domain_force>[(1, '=', 1)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
-        </record>
+    <record id="rule_assetflow_booking_manager" model="ir.rule">
+        <field name="name">Manager Booking Rule</field>
+        <field name="model_id" ref="model_assetflow_booking"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+    </record>
 
-        <!-- Maintenance Rules -->
-        <record id="rule_assetflow_maintenance_employee" model="ir.rule">
-            <name>Employee Maintenance Rule</name>
-            <model_id ref="model_assetflow_maintenance"/>
-            <domain_force>[('create_uid', '=', user.id)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_employee'))]"/>
-        </record>
+    <!-- Maintenance Rules -->
+    <record id="rule_assetflow_maintenance_employee" model="ir.rule">
+        <field name="name">Employee Maintenance Rule</field>
+        <field name="model_id" ref="model_assetflow_maintenance"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_employee'))]"/>
+    </record>
 
-        <record id="rule_assetflow_maintenance_manager" model="ir.rule">
-            <name>Manager Maintenance Rule</name>
-            <model_id ref="model_assetflow_maintenance"/>
-            <domain_force>[(1, '=', 1)]</domain_force>
-            <groups eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
-        </record>
+    <record id="rule_assetflow_maintenance_manager" model="ir.rule">
+        <field name="name">Manager Maintenance Rule</field>
+        <field name="model_id" ref="model_assetflow_maintenance"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_assetflow_manager')), (4, ref('group_assetflow_dept_head')), (4, ref('group_assetflow_admin'))]"/>
+    </record>
 </odoo>

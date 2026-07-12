@@ -2,8 +2,8 @@
 <odoo>
     <!-- Client Action Definition -->
     <record id="action_assetflow_dashboard" model="ir.actions.client">
-        <name>Dashboard</name>
-        <tag>assetflow_dashboard</tag>
+        <field name="name">Dashboard</field>
+        <field name="tag">assetflow_dashboard</field>
     </record>
 
     <!-- Main Menus -->
