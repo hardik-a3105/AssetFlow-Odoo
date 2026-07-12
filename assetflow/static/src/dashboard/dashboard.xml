@@ -544,9 +544,12 @@
                                         <label>Date Selection</label>
                                         <input type="date" class="form-input" t-model="state.bookingDate"/>
                                     </div>
-                                    <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'book_slot'">
-                                        Create Booking
-                                    </button>
+                                    <div class="form-group">
+                                        <label style="visibility: hidden; display: block; margin-bottom: 8px;">Action</label>
+                                        <button class="btn btn-primary" t-on-click="() => this.state.showModal = 'book_slot'">
+                                            Create Booking
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <!-- Hourly Scheduler view -->
