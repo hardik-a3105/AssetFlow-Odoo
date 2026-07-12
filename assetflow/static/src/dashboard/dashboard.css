@@ -169,6 +169,9 @@ h1, h2, h3, h4, h5, h6 {
     flex-grow: 1;
     height: 100%;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    will-change: transform;
     padding: 36px;
     box-sizing: border-box;
     position: relative;
@@ -1037,6 +1040,9 @@ h1, h2, h3, h4, h5, h6 {
 .card-notifications-list {
     max-height: 600px;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    will-change: transform;
 }
 
 .full-feed-item {
@@ -1161,6 +1167,8 @@ h1, h2, h3, h4, h5, h6 {
 .modal-body {
     padding: 24px;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-footer {
