@@ -20,23 +20,35 @@
                 </h2>
                 <div class="checklist-items" style="display: flex; flex-direction: column; gap: 10px;">
                     <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="font-size: 1.15rem; width: 24px;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_assets">✅</t>
-                            <t t-else="">⬜</t>
+                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_assets">
+                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
+                            </t>
                         </span>
                         <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_assets) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Register your first asset</span>
                     </div>
                     <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="font-size: 1.15rem; width: 24px;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_bookings">✅</t>
-                            <t t-else="">⬜</t>
+                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_bookings">
+                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
+                            </t>
                         </span>
                         <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_bookings) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Book a resource</span>
                     </div>
                     <div class="checklist-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem;">
-                        <span style="font-size: 1.15rem; width: 24px;">
-                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_maintenances">✅</t>
-                            <t t-else="">⬜</t>
+                        <span style="width: 24px; display: inline-flex; align-items: center; justify-content: center;">
+                            <t t-if="state.data.checklist &amp;&amp; state.data.checklist.has_maintenances">
+                                <i class="fa fa-check-circle text-success" style="font-size: 1.15rem; color: #10b981;"/>
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-circle-o text-muted" style="font-size: 1.15rem; color: #94a3b8;"/>
+                            </t>
                         </span>
                         <span t-attf-style="color: #475569; {{ (state.data.checklist &amp;&amp; state.data.checklist.has_maintenances) ? 'text-decoration: line-through; opacity: 0.6;' : '' }}">Raise a maintenance request</span>
                     </div>
